@@ -17,26 +17,133 @@
     <script src="./html5.min.js"></script>
     <![endif]-->
     <!--Next script is wrote by doc2git, which is writing for fix the js pulubic function demensions of element. It will be call when Dom loaded by mind.-->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .disable {
+            background-color: gray;
+        }
+    </style>
     <script data-hacker="doc2git">
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            var turtorIframe = document.getElementById('turtor-iframe');
+            var turtorNavbar = document.getElementById('turtor-navbar');
+            turtorNavbar.histories = [];
+            console.log(turtorNavbar, turtorNavbar.histories, '37+++');
+
+            //以下使用链式数据结构为iframe添加浏览历史记录
+            function History(prev, value, next) {
+                prev = prev || null;
+                value = value || '';
+                next = next || null;
+                return {value: value, prev: prev, next: next};
+                /*
+                 * instance is look lick this:
+                 * {
+                 *   prev: {prev:prev-prev, prev-value, this-instance}
+                 *   value: 'this-value',
+                 *   next: {this-instance, next-value, next-next}
+                 * }
+                * */
+            };
+            turtorIframe.cur = new History();
+            turtorNavbar.to = function () {
+                //turtorIframe.src = this.history.cur; //设定教程iframe的src
+                turtorIframe.src = this.histories[0].value; //设定教程iframe的src
+            };
+            console.log(turtorNavbar.to, '59---');
+
+            //为教程按钮绑定事件以导航教程iframe
+            turtorNavbar.go = function () {
+                var turtorUrlInput = document.getElementById('turtor-url-input');
+                var goBtn = document.getElementById('goBtn');
+                console.log(turtorUrlInput, goBtn, turtorIframe, '32---');
+                var h = new History(this.histories[], turtorUrlInput.value, null); //empty object store the old url.
+                to(); //iframe jump.
+                this.histories.push(h); //It looks like that, this centence is non-necessary, but store all History instance into a array, I feel well.
+                this.histories[0] = h; //指定以不变的空间地址以存储当前once-history object.
+            };
+            console.log(turtorNavbar.go, '71---');
+
+            function toOrDisable(urlValue) {
+                if (!urlValue) {
+                    this.target.className = 'disable';
+                } else {
+                    to();
+                }
+            }
+
+            turtorNavbar.back = function () {
+                this.histories[0] = this.histories[0].prev;
+                toOrDisable.call(this, this.histories[0].value);
+            };
+            console.log(turtorNavbar.back, '85---');
+
+            turtorNavbar.forward = function () {
+                this.histories[0] = this.histories[0].next;
+                toOrDisable.call(this, this.histories[0].value);
+            };
+            console.log(turtorNavbar.forward, '91---');
+
+            ~function initTurtorIframeBar() {
+                turtorNavbar.onclick = function (ev) {
+                    console.log(95);
+                    switch (ev.target.id) {
+                        case 'back':
+                            this.back();
+                            break;
+                        case 'goBtn':
+                            this.go();
+                            break;
+                        case 'forward':
+                            this.forward();
+                            break;
+                    }
+                }
+            }();  //教程导航条的定义至此完成
+
+        }, false);
+
+
+        //以下定义在resize函数中执行的修复盒子尺寸的函数
         function doc2git_textareaReRender() {
             var textarea__panel_body = document.getElementById('doc2git--textarea--panel-body');
-//            console.log(textarea__panel_body, '26---');
             var codeMirror__cm_s_default = textarea__panel_body.getElementsByClassName('CodeMirror cm-s-default')[0];
 //            console.log(codeMirror__cm_s_default, '27---');
-            codeMirror__cm_s_default.style.height = '300px';
+            codeMirror__cm_s_default.style.height = 'auto';
         }
+
         function doc2git_OutputReRender() {
             var outputPanelBody = document.getElementById('doc2git--output--panel-body');
-            console.log(outputPanelBody, 26);
             var outputIframe = outputPanelBody.getElementsByTagName('iframe')[0];
             if (outputIframe) {
                 outputIframe.style.minHeight = '100px';
                 outputIframe.style.height = '100px';
-//                console.log( '30+_++', outputIframe.style.minHeight, outputIframe.style.height);
             }
             var iframewrapper = document.getElementById('iframewrapper');
             iframewrapper.style.minHeight = '100px';
             iframewrapper.style.height = '100px';
+        }
+
+        function doc2git_textareaBoxKeepWidth() {
+            var textareaBox = document.getElementById('doc2git--texarea-box');
+            var outputPanelBody = document.getElementById('doc2git--output--panel-body');
+            var mustWidth = window.getComputedStyle(outputPanelBody).width;
+            textareaBox.style.width = mustWidth;
+        }
+
+        function doc2git_leftRightBoxKeepDimension() {
+            var leftBox = document.getElementById('doc2git--left-box');
+            var rigitBox = document.getElementById('doc2git--right-box');
+            var mustHeight = window.getComputedStyle(leftBox).height;
+            rigitBox.style.height = mustHeight;
+            var mustWidth = window.getComputedStyle(leftBox).width;
+            rigitBox.style.width = mustWidth;
         }
     </script>
 
@@ -114,12 +221,48 @@
     </div>
 </nav>
 
-<iframe class="col-sm-6" src="https://cn.vuejs.org/v2/guide/" width="300px" ; height="594px" frameborder="0"></iframe>
-<div class="container">
+<div style="height:680px; overflow-y:hidden; margin:0; padding:0" class="container">
 
-    <div class="col-sm-6">
+    <!--<div class="col-sm-6">-->
+    <!--<form class="form-inline">-->
+    <!--<div class="form-group mx-sm-10">-->
+    <!--<label for="url" class="sr-only">请键入教程地址</label>-->
+    <!--<input type="password" class="form-control" id="url" placeholder="请键入教程地址">-->
+    <!--</div>-->
+    <!--</form>-->
+    <!--<button class="btn btn-primary">Go</button>-->
+    <!--<iframe src="https://cn.vuejs.org/v2/guide/" width="300px" ; height="594px" frameborder="0"></iframe>-->
+    <!--</div>-->
 
-        <div class="panel panel-default">
+
+    <div id="doc2git--left-box" style="height:100%; display:flex; flex-direction:column; align-content:space-between"
+         class="col-sm-6">
+        <div style="flex:0" class="panel panel-default">
+            <div class="panel-heading">
+                <form id="turtor-navbar" style="display:flex; justify-content:space-around" class="form-inline">
+                    <!--<label for="url" class="sr-only">请键入教程地址</label>-->
+                    <button id="back" type="button" class="btn btn-default">B</button>
+                    <button id="forward" type="button" class="btn btn-default">F</button>
+                    <input id="turtor-url-input" type="text" style="width:80%" class="form-control"
+                           placeholder="请键入教程地址">
+                    <button id="goBtn" type="button" class="btn btn-default">GO!</button>
+
+                </form>
+            </div>
+            <!--<div class="panel-body">-->
+            <!--<div id="iframewrapper"></div>-->
+            <!--</div>-->
+        </div>
+        <iframe id="turtor-iframe" src="https://cn.vuejs.org/v2/guide/" width="100%" style="flex:1"
+                frameborder="0"></iframe>
+    </div>
+
+    <div id="doc2git--right-box"
+         style="height:100%; display:flex; flex-direction: column; justify-content:space-between; align-items:center; align-content:stretch;"
+         class="col-sm-6">
+
+        <!--<div style="flex:1; height:400px; width:100%; display:flex; flex-direction:column; align-content:stretch; justify-content:space-around;" class="panel panel-default">-->
+        <div id="doc2git--texarea-box" class="panel panel-default">
             <div class="panel-heading">
                 <form class="form-inline">
                     <div class="row">
@@ -135,7 +278,7 @@
                     </div>
                 </form>
             </div>
-            <div id="doc2git--textarea--panel-body" class="panel-body">
+            <div id="doc2git--textarea--panel-body" style="height:100%" class="panel-body">
 			<textarea class="form-control" id="textareaCode" name="textareaCode">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -161,32 +304,33 @@ new Vue({
             </div>
         </div>
 
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <form class="form-inline">
-                    <button type="button" class="btn btn-default">运行结果</button>
-                </form>
-            </div>
-            <div id="doc2git--output--panel-body" class="panel-body">
+        <div class="panel panel-default" style="width:100%; margin-bottom:0">
+            <!--<div class="panel-heading">-->
+            <!--<form class="form-inline">-->
+            <!--<button type="button" class="btn btn-default">运行结果</button>-->
+            <!--</form>-->
+            <!--</div>-->
+            <div id="doc2git--output--panel-body" style="position:relative;" class="panel-body">
+                <span style="position:absolute; right:20px; color:#ccc; font-size:14px;">&lt;&lt; 运行结果</span>
                 <div style="height: 240px;" id="iframewrapper"></div>
             </div>
         </div>
     </div>
 
+</div>
 
-    <footer>
-        <div class="row">
-            <div class="col-sm-12">
-                <div style="text-align: center;">
+<footer>
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="text-align: center;">
 
-                    <hr>
+                <hr>
 
-                    <p>Copyright © 2013-2017<a target="_blank" href="//doc2git.com/">doc2git</a></p>
-                </div>
+                <p>Copyright © 2013-2017<a target="_blank" href="//doc2git.com/">&nbsp;&nbsp;doc2git.com</a></p>
             </div>
         </div>
-    </footer>
-</div>
+    </div>
+</footer>
 <script>
     var mixedMode = {
         name: "htmlmixed",
@@ -199,7 +343,6 @@ new Vue({
                 mode: "vbscript"
             }]
     };
-    console.log(document.getElementById("textareaCode"), '204---');
     var editor = CodeMirror.fromTextArea(document.getElementById("textareaCode"), {
         mode: mixedMode,
         selectionPointer: true,
@@ -209,7 +352,6 @@ new Vue({
         indentWithTabs: true
     });
 
-    console.log(editor, '214---');
     window.addEventListener("resize", autodivheight);
 
     var x = 0;
@@ -225,11 +367,13 @@ new Vue({
         if (document.documentElement && document.documentElement.clientHeight) {
             winHeight = document.documentElement.clientHeight;
         }
-        height = winHeight * 0.68
+        height = winHeight * 0.68;
         editor.setSize('100%', height);
         document.getElementById("iframeResult").style.height = height + "px";
         doc2git_textareaReRender();
         doc2git_OutputReRender();
+        doc2git_leftRightBoxKeepDimension();
+        doc2git_textareaBoxKeepWidth()
     }
 
     function submitTryit() {
