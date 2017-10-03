@@ -1,6 +1,6 @@
 .CodeMirror {
     font-family: monospace;
-    height: 200px;
+    height: 260px; /* hacked by doc2git */
     color: black
 }
 
