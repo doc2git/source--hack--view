@@ -5,27 +5,24 @@
     <title>Edit code here, view the output write away!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <!--<script src="//cdn.bootcss.com/codemirror/5.2.0/codemirror.min.js"></script>-->
     <script src="./codemirror.min.js"></script>
     <link rel="stylesheet" href="//cdn.bootcss.com/codemirror/5.2.0/codemirror.min.css">
-    <script src="//cdn.bootcss.com/codemirror/5.2.0/mode/htmlmixed/htmlmixed.min.js"></script>
-    <script src="//cdn.bootcss.com/codemirror/5.2.0/mode/css/css.min.js"></script>
-    <script src="//cdn.bootcss.com/codemirror/5.2.0/mode/javascript/javascript.min.js"></script>
-    <script src="//cdn.bootcss.com/codemirror/5.2.0/mode/xml/xml.min.js"></script>
-    <script src="//cdn.bootcss.com/codemirror/5.2.0/addon/edit/closetag.min.js"></script>
-    <script src="//cdn.bootcss.com/codemirror/5.2.0/addon/edit/closebrackets.min.js"></script>
-    <script src="codemirror.min.js"></script>
+    <script src="./htmlmixed.min.js"></script>
+    <script src="./css.min.js"></script>
+    <script src="./javascript.min.js"></script>
+    <script src="./xml.min.js"></script>
+    <script src="./closetag.min.js"></script>
+    <script src="./closebrackets.min.js"></script>
     <!--[if lt IE 9]>
-    <script src="//cdn.bootcss.com/html5shiv/r29/html5.min.js"></script>
     <script src="./html5.min.js"></script>
     <![endif]-->
     <!--Next script is wrote by doc2git, which is writing for fix the js pulubic function demensions of element. It will be call when Dom loaded by mind.-->
     <script data-hacker="doc2git">
         function doc2git_textareaReRender() {
             var textarea__panel_body = document.getElementById('doc2git--textarea--panel-body');
-            console.log(textarea__panel_body, '26---');
+//            console.log(textarea__panel_body, '26---');
             var codeMirror__cm_s_default = textarea__panel_body.getElementsByClassName('CodeMirror cm-s-default')[0];
-            console.log(codeMirror__cm_s_default, '27---');
+//            console.log(codeMirror__cm_s_default, '27---');
             codeMirror__cm_s_default.style.height = '300px';
         }
         function doc2git_OutputReRender() {
@@ -35,79 +32,80 @@
             if (outputIframe) {
                 outputIframe.style.minHeight = '100px';
                 outputIframe.style.height = '100px';
-                console.log( '30+_++', outputIframe.style.minHeight, outputIframe.style.height);
+//                console.log( '30+_++', outputIframe.style.minHeight, outputIframe.style.height);
             }
             var iframewrapper = document.getElementById('iframewrapper');
             iframewrapper.style.minHeight = '100px';
             iframewrapper.style.height = '100px';
         }
     </script>
-</head>
-<body>
 
-<style>
-    body {
-        min-height: 300px;
-        padding-top: 90px;
-        background: #f6f6f6;
-    }
+    <style>
+        body {
+            min-height: 300px;
+            padding-top: 90px;
+            background: #f6f6f6;
+        }
 
-    .container {
-        width: 98%;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto
-    }
-
-    .CodeMirror {
-        min-height: 300px;;
-        font-family: Menlo, Monaco, Consolas, "Andale Mono", "lucida console", "Courier New", monospace;
-    }
-
-    #textareaCode {
-        min-height: 260px /*hacked by doc2git*/
-    }
-
-    #iframeResult {
-        display: block;
-        overflow: hidden;
-        border: 0 !important;
-        min-width: 100px;
-        width: 100%;
-        min-height: 260px; /*hacked by doc2git*/
-        background-color: #fff
-    }
-
-    @media screen and (max-width: 768px) {
-        #textareaCode {
-            height: 300px
+        .container {
+            width: 98%;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto
         }
 
         .CodeMirror {
-            height: 300px;
+            min-height: 300px;;
             font-family: Menlo, Monaco, Consolas, "Andale Mono", "lucida console", "Courier New", monospace;
         }
 
+        #textareaCode {
+            min-height: 260px /*hacked by doc2git*/
+        }
+
         #iframeResult {
-            height: 300px
+            display: block;
+            overflow: hidden;
+            border: 0 !important;
+            min-width: 100px;
+            width: 100%;
+            min-height: 260px; /*hacked by doc2git*/
+            background-color: #fff
         }
 
-        .form-inline {
-            padding: 6px 0 2px 0
-        }
-    }
+        @media screen and (max-width: 768px) {
+            #textareaCode {
+                height: 300px
+            }
 
-    .logo h1 {
-        /*background-image: url(/images/logo-domain-white.png);*/
-        background-repeat: no-repeat;
-        text-indent: -9999px;
-        width: 160px;
-        height: 39px;
-        margin-top: 10px;
-        display: block
-    }
-</style>
+            .CodeMirror {
+                height: 300px;
+                font-family: Menlo, Monaco, Consolas, "Andale Mono", "lucida console", "Courier New", monospace;
+            }
+
+            #iframeResult {
+                height: 300px
+            }
+
+            .form-inline {
+                padding: 6px 0 2px 0
+            }
+        }
+
+        .logo h1 {
+            /*background-image: url(/images/logo-domain-white.png);*/
+            background-repeat: no-repeat;
+            text-indent: -9999px;
+            width: 160px;
+            height: 39px;
+            margin-top: 10px;
+            display: block
+        }
+    </style>
+</head>
+<body>
+
 <nav class="navbar navbar-default navbar-fixed-top" style="background: #00b0c1;">
     <div class="container">
         <div class="navbar-header logo"><h1>
@@ -201,6 +199,7 @@ new Vue({
                 mode: "vbscript"
             }]
     };
+    console.log(document.getElementById("textareaCode"), '204---');
     var editor = CodeMirror.fromTextArea(document.getElementById("textareaCode"), {
         mode: mixedMode,
         selectionPointer: true,
@@ -210,6 +209,7 @@ new Vue({
         indentWithTabs: true
     });
 
+    console.log(editor, '214---');
     window.addEventListener("resize", autodivheight);
 
     var x = 0;
@@ -281,9 +281,9 @@ new Vue({
     <!--})();-->
     <!--</script>-->
 </div>
-<script data-hacker="doc2git">
-//    doc2git_textareaDimension();
-</script>
 <!--Bellow code attemp to get the output iframe and hack its height, but when output was changing , the height will resume, so this idea is worse.-->
-< /body>
-< /html>
+</body>
+</html>
+<script data-hacker="doc2git">
+    //    doc2git_textareaDimension();
+</script>
