@@ -40,7 +40,6 @@
             console.log(turtorIframe, '35---');
             var turtorNavbar = document.getElementById('turtor-navbar');
             var back = document.getElementById('back');
-//            console.log(turtorNavbar.index, '42---');
             var next = document.getElementById('next');
             turtorNavbar.histories = [];
             turtorNavbar.prevNavDirections = 'next';
@@ -90,15 +89,15 @@
                 removeDisabledClass(back);
                 removeDisabledClass(next);
                 console.log(this, '95---');
-                if (this.index <= 0) !(/\bdisabled\b/.test(back.className)) ? (back.className += ' disabled') : null;
-                if (this.index >= this.histories.length - 1) !(/\bdisabled\b/.test(next.className)) ? (next.className += ' disabled') : null;
+                if (this.cur.id <= 0) !(/\bdisabled\b/.test(back.className)) ? (back.className += ' disabled') : null;
+                if (this.cur.id >= this.histories.length - 1) !(/\bdisabled\b/.test(next.className)) ? (next.className += ' disabled') : null;
                 console.log(back.className, next.className, '86---');
             }
 
             turtorNavbar.uriAttemptTo = function (uriAnyMore=true) {
                 this.handleNavBtnClassName();
-                console.log(this.histories, '99---', this.index);
-//                console.log(this.cur, '100---');
+                console.log(this.histories, '99---');
+                console.log(this.cur, '100---');
                 if (uriAnyMore) {
                     this.iframeTo();
                 } else {
@@ -115,7 +114,6 @@
                 if (turtorUrlInput.value.trim() !== this.histories[this.histories.length - 1].uri) {
                     console.log('1:', turtorUrlInput.value.trim(), '\n2:', this.histories[this.histories.length - 1].uri, '110---');
                     this.cur = this.histories[this.histories.length] = new History(turtorUrlInput.value.trim(), this.histories.length); //empty object store the old uri.
-                    this.index = this.histories.length - 1;
                     console.log(this.cur, '111---');
                     console.log(this.histories, '108---');
 //                var item = turtorUrlInput.value;
@@ -152,33 +150,31 @@
             turtorNavbar.flashState = function () { //每次刷新教程iframe或修改教程iframe的src前都要执行
                 console.log(this.histories, '151---');
                 console.log(this.cur, '152---');
-//                if (this.index <= 0 || this.index >= this.histories.length) {
+//                if (this.cur.id <= 0 || this.cur.id >= this.histories.length) {
 //
 //                    return void 0;
 //                }
                 switch (this.curNavDirection) {
                     case 'back':
-                        if(this.index <= 0) return;
+                        if(this.cur.id <= 0) return;
                         console.group('testing this.cur');
                         console.log(this.histories, '158---');
-//                        this.latest = cloneObjLightOrDeep(reverse, this.histories[this.index - 1]);
-                        console.log(this.index, '146---');
-                        this.histories[this.histories.length] = deepCloneObj(this.histories[this.index - 1]);
+//                        this.latest = cloneObjLightOrDeep(reverse, this.histories[this.cur.id - 1]);
+                        console.log(this.cur.id, '146---');
+                        this.histories[this.histories.length] = deepCloneObj(this.histories[this.cur.id - 1]);
                         console.log(this.cur, '160---');
-                        this.cur = this.histories[this.index - 1];
-                        this.index--;
+                        this.cur = this.histories[this.cur.id - 1];
                         console.log(this.cur, '161');
                         console.log(this.histories, '165---');
                         console.groupEnd('testing this.cur');
                         break;
                     case 'next':
                         console.group('testing this.histories');
-                        if(this.index >= this.histories.length - 1) return;
-                        console.log(this.index, '170---');
+                        if(this.cur.id >= this.histories.length - 1) return;
+                        console.log(this.cur.id, '170---');
                         console.log(this.cur, '171---');
-//                        this.latest = deepCloneObj(this.histories[this.index + 1]);
-                        this.cur = this.histories[this.index + 1];
-                        this.index++;
+//                        this.latest = deepCloneObj(this.histories[this.cur.id + 1]);
+                        this.cur = this.histories[this.cur.id + 1];
                         console.log(this.cur, '174---');
                         console.groupEnd('testing this.histories');
                         break;
@@ -195,7 +191,7 @@
                 console.log(this, '160---');
                 console.log(ev, '145---');
                 console.log(this.cur, '176---');
-                if (this.index <= 0) { //如果索引为0， 向uriToOrDisable传入false，使后退按钮className as disabled;
+                if (this.cur.id <= 0) { //如果索引为0， 向uriToOrDisable传入false，使后退按钮className as disabled;
                     this.uriAttemptTo(false);
                 } else {
                     this.prevNavDirection = this.curNavDirection;
@@ -212,8 +208,8 @@
             console.log(turtorNavbar.uriBack, '85---');
 
             turtorNavbar.uriForward = function (ev) {
-                if (this.index >= this.histories.length - 1) { //如果索引为this.histories.length-1， 向uriToOrDisable传入false，使后退按钮className as disabled;
-                    console.log(this.index, '212---');
+                if (this.cur.id >= this.histories.length - 1) { //如果索引为this.histories.length-1， 向uriToOrDisable传入false，使后退按钮className as disabled;
+                    console.log(this.cur.id, '212---');
                     this.uriAttemptTo(false);
                 } else {
                     this.prevNavDirection = this.curNavDirection;
