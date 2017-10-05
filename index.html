@@ -211,18 +211,18 @@
                 turtorNavbar.uriGo = function () {
                     if (this.prevNavDirection !== 'next') this.prevNavDirection = 'next';
                     var goBtn = document.getElementById('go-btn');
-                    console.log(turtorUrlInput, goBtn, turtorIframe, '32---');
                     var that = this;
+                    console.log('215---');
                     Promise.resolve(that.forwardHistories.shangjiao())
                         .then(function (uriObjsAry) {
+                            console.log(uriObjsAry, '217---++');
                             that.backHistories.pasteAry(uriObjsAry);
+                            console.log(uriObjsAry, '220--__++*');
                             return that.backHistories.shangjiao();
                         }).then(function (uriObjsAry) {
                         that.mainHistories.pasteAry(uriObjsAry);
                     })
-                        .then(console.log(that.mainHistories.container, '209---'))
                         .then(function () {
-
                             if (
                                 that.mainHistories.container.length <= 0
                                 || (that.mainHistories.container[that.mainHistories.container.length - 1]
@@ -230,16 +230,8 @@
                                     !== turtorUrlInput.value.trim()
                                 )
                             ) {
-//                        this.cur = this.mainHistories.container[this.mainHistories.container.length] = new History(); //empty object store the old uri.
-                                console.log(new Histories(turtorUrlInput.value.trim()), '236----');
                                 that.cur = that.mainHistories.container[that.mainHistories.container.length] = new History(turtorUrlInput.value.trim());
-                                console.log(that.mainHistories, '240---');
-                                console.log(that.cur, '111---');
-//                var item = turtorUrlInput.value;
-                                //It looks like that, this centence is non-necessary, but store all History instance into a array, I feel well.
-                                //指定以不变的空间地址以存储当前once-history object.
                                 if (that.checkObjUri(that.cur)) {
-                                    console.log(that.cur, '111---');
                                     that.mainIndex = that.mainHistories.container.length - 1;
                                     that.removeNavBtnDisabledClass(prev);
                                     turtorIframe.src = turtorUrlInput.value = that.cur.uri; //设定教程iframe的src
@@ -247,7 +239,6 @@
                             }
                         })
                 };
-                console.log(turtorNavbar.uriGo, '71---');
 
                 function deepCloneObj(oldObj) {
                     console.log(oldObj, '94---');
@@ -297,23 +288,27 @@
                         console.log('the disabled props of prev button element is true. so tutorNavBar.urlBack returned at the beginning.');
                         return void 0;
                     }
-//                    if (this.backIndex <= 0) {
-                    console.log(this.backIndex, '300-----');
-                    if (this.forwardHistories.container.length > 0) { //if there are objects in this.forwardHistories, fetch all obj into a array in this.forwardHistories
-                        var tempAry = this.forwardHistories.shangjiao();
-                        this.backHistories.pasteAry(tempAry);
-                    } else if (this.mainHistories.container.length > 0) { //if there is any valid object in this.mainHistories, fetch a obj in this.forwardHistories
-                        var tempObj = this.mainHistories.cut();
-                        this.backHistories.pasteObj(tempObj);
-                    } else {
-//                            this.backIndex++; //复原该函数体内第一次修改this.backIndex的影响
-                        prev.disabled = true;
-                        this.addNavBtnDisabledClass(prev);
-                        alert('No more url in this side of history.');
-                        return void 0;
+                    if (this.backIndex >= 0) {
+                        this.backIndex--;
+                        this.forwardIndex--;
                     }
-//                        this.backIndex--; //
-//                    }
+                    if (this.backIndex < 0) {
+                        this.forwardIndex++;
+                        this.backIndex++;
+                        console.log(this.backIndex, '300-----');
+                        if (this.forwardHistories.container.length > 0) { //if there are objects in this.forwardHistories, fetch all obj into a array in this.forwardHistories
+                            var tempAry = this.forwardHistories.shangjiao();
+                            this.backHistories.pasteAry(tempAry);
+                        } else if (this.mainHistories.container.length > 0) { //if there is any valid object in this.mainHistories, fetch a obj in this.forwardHistories
+                            var tempObj = this.mainHistories.cut();
+                            this.backHistories.pasteObj(tempObj);
+                        } else {
+                            prev.disabled = true;
+                            this.addNavBtnDisabledClass(prev);
+                            alert('No more url in this side of history.');
+                            return void 0;
+                        }
+                    }
                     console.log(this.backIndex);
                     this.cur = this.backHistories.container[this.backIndex];
                     console.log(this.cur, '321---+++===--');
@@ -347,12 +342,15 @@
                     console.log(this.forwardIndex, '349---+++***');
                     console.log(this.forwardIndex, '351---+++***');
                     console.log(this.forwardHistories.container.length, '352---+++***');
-                    this.forwardIndex++;
-                    if (this.backHistories.container.length > 0 && this.forwardIndex > this.forwardHistories.container.length - 1) {
+                    if (this.forwardIndex < this.forwardHistories.container.length - 1) {
+                        this.forwardIndex++;
+                        this.backIndex++;
+                    }
+                    if (this.backHistories.container.length <= 0
+                       || this.forwardIndex > this.forwardHistories.container.length - 1) {
                         var tempObj = this.backHistories.cut();
                         this.forwardHistories.pasteObj(tempObj);
-                        this.forwardIndex = this.forwardHistories.container.length - 1;
-                        this.cur = this.forwardHistories.container.slice(-1)[0];
+                        this.cur = this.forwardHistories.container[this.forwardIndex];
 //                        this.forwardIndex++;
                     } else { //添加uri对象没成功
 //                        this.forwardIndex--; //复原该函数体内第一次修改this.forwardIndex的影响
