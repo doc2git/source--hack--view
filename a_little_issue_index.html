@@ -36,186 +36,105 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-                var turtorIframe = document.getElementById('turtor-iframe');
-                console.log(turtorIframe, '35---');
-                var turtorNavbar = document.getElementById('turtor-navbar');
-                var back = document.getElementById('back');
+            var turtorIframe = document.getElementById('turtor-iframe');
+            console.log(turtorIframe, '35---');
+            var turtorNavbar = document.getElementById('turtor-navbar');
+            var prev = document.getElementById('prev');
 //            console.log(turtorNavbar.index, '42---');
-                var next = document.getElementById('next');
-                turtorNavbar.prevNavDirections = 'next';
-                turtorNavbar.curNavDirections = 'null';
-                console.log(turtorNavbar, turtorNavbar.histories, '37+++');
+            var next = document.getElementById('next');
+            turtorNavbar.histories = [];
+            turtorNavbar.prevNavDirections = 'next';
+            turtorNavbar.curNavDirections = 'null';
+            console.log(turtorNavbar, turtorNavbar.histories, '37+++');
 
-                function Histories() {
-                    this.container = [];
-                    //以下4个函数属性都是要在伪实例中重写的方法
-                    //与上级Histories实例之间的通信
-                    //+
-                    this.pasteObj = function () {
-                    };
-                    //-
-                    this.shangjiao = function () {
-                    };
-                    //与下级Histories实例之间的通信
-                    //+
-                    this.pasteAry = function () {
-                    };
-                    //-
-                    this.cut = function () {
-                    };
-                }
-
-                //            turtorNavbar.histories = [];
-                turtorNavbar.MainHistories = function () {
-                    Histories.call(this); //this.container is a array.
-                    //与上级Histories实例之间的通信
-                    //+
-                    this.pasteObj = function () {
-                    };
-                    //-
-                    history.shangjiao = function () {
-                    };
-                    //与下级Histories实例之间的通信
-                    //+
-                    this.pasteAry = function (passInAry) {
-                        passInAry.reverse(); //Direction change, so reverse passInAry.
-                        return this.container.concat(passInAry);
-                    };
-                    //-
-                    this.cut = function () {
-                        return this.container.pop(); //return a History instance which would be cut out;
-                    };
-                };
-
-                turtorNavbar.BackHistories = function () {
-                    Histories.call(this); //this.container is a array.
-                    //与上级Histories实例之间的通信
-                    //+
-                    this.pasteObj = function (passInObj) {
-                        return this.container.unshift(passInObj); //返回的是新增长度数组的长度
-                    };
-                    //-
-                    history.shangjiao = function () {
-                        return this.container.splice(0);
-                    };
-                    //与下级Histories实例之间的通信
-                    //+
-                    this.pasteAry = function (passInAry) {
-                        passInAry.reverse(); //Direction change, so reverse passInAry.
-                        return passInAry.concat(this.container);
-                    };
-                    //-
-                    this.cut = function () {
-                        return this.container.shift(0);  //return a History instance which would be cut out;
-                    };
-                };
-
-                turtorNavbar.ForwardHistories = function () {
-                    Histories.call(this); //this.container is a array.
-                    //+
-                    this.pasteObj = function (passInObj) {
-                        return this.container.push(passInObj); //返回的是新增长度数组的长度
-                    };
-                    //-
-                    this.shangjiao = function () {
-                        return this.container.splice(0);
-                    };
-                    //+
-                    this.pasteAry = function (passInAry) {
-                    };
-                    //-
-                    this.cut = function () {
-                    };
-                };
-
-                //以下使用链式数据结构为iframe添加浏览历史记录
-                function History(uri = 'http://doc2git.com'.trim(), id = turtorNavbar.histories.length, valid = true) {
-                    this.uri = uri;
-                    this.id = id;
-                    this.valid = valid;
+            //以下使用链式数据结构为iframe添加浏览历史记录
+            function History(uri = 'http://doc2git.com'.trim(), id = turtorNavbar.histories.length, valid = true) {
+                this.uri = uri;
+                this.id = id;
+                this.valid = valid;
 //                prev = prev || null;
 //                value = value || '';
 //                next = next || null;
 //                return {value: value, prev: prev, next: next};
-                    /*
-                     * instance is look lick this:
-                     * {
-                     *   prev: {prev:prev-prev, prev-value, this-instance}
-                     *   value: 'this-value',
-                     *   next: {this-instance, next-value, next-next}
-                     * }
-                    * */
-                };
-                turtorNavbar.cur = turtorNavbar.histories[0] = new History();
+                /*
+                 * instance is look lick this:
+                 * {
+                 *   prev: {prev:prev-prev, prev-value, this-instance}
+                 *   value: 'this-value',
+                 *   next: {this-instance, next-value, next-next}
+                 * }
+                * */
+            };
+            turtorNavbar.cur = turtorNavbar.histories[0] = new History();
 
-                turtorNavbar.iframeTo = function () {
-                    //turtorIframe.src = this.history.cur; //设定教程iframe的src
-                    console.log(turtorIframe, '62---');
-                    console.log(this.cur.uri, '64---');
-                    console.log(turtorIframe, '73---');
-                    turtorIframe.src = this.cur.uri; //设定教程iframe的src
+            turtorNavbar.iframeTo = function () {
+                //turtorIframe.src = this.history.cur; //设定教程iframe的src
+                console.log(turtorIframe, '62---');
+                console.log(this.cur.uri, '64---');
+                console.log(turtorIframe, '73---');
+                turtorIframe.src = this.cur.uri; //设定教程iframe的src
 
-                    console.log(turtorIframe.src, '75---');
-                };
-                console.log(turtorNavbar.iframeTo, '59---');
+                console.log(turtorIframe.src, '75---');
+            };
+            console.log(turtorNavbar.iframeTo, '59---');
 
 
-                turtorNavbar.handleNavBtnClassName = function () {
+            turtorNavbar.handleNavBtnClassName = function () {
 //                ev.target.className = ev.target.className ? ev.target.className + ' disabled' : 'disabled';
-                    function removeDisabledClass(ele) {
-                        ele.className = ele.className.replace(/\bdisabled\b/, '').replace(/\s+/, ' ').replace(/(^\s+|\s+$)/, '');
-                        console.log(ele.className, '78---');
-                    }
-
-                    console.log(back, next, '80---');
-                    removeDisabledClass(back);
-                    removeDisabledClass(next);
-                    console.log(this, '95---');
-                    if (this.index <= 0) !(/\bdisabled\b/.test(back.className)) ? (back.className += ' disabled') : null;
-                    if (this.index >= this.histories.length - 1) !(/\bdisabled\b/.test(next.className)) ? (next.className += ' disabled') : null;
-                    console.log(back.className, next.className, '86---');
+                function removeDisabledClass(ele) {
+                    ele.className = ele.className.replace(/\bdisabled\b/, '').replace(/\s+/, ' ').replace(/(^\s+|\s+$)/, '');
+                    console.log(ele.className, '78---');
                 }
 
-                turtorNavbar.uriAttemptTo = function (uriAnyMore = true) {
-                    this.handleNavBtnClassName();
-                    console.log(this.histories, '99---', this.index);
+                console.log(prev, next, '80---');
+                removeDisabledClass(prev);
+                removeDisabledClass(next);
+                console.log(this, '95---');
+                if (this.index <= 0) !(/\bdisabled\b/.test(prev.className)) ? (prev.className += ' disabled') : null;
+                if (this.index >= this.histories.length - 1) !(/\bdisabled\b/.test(next.className)) ? (next.className += ' disabled') : null;
+                console.log(prev.className, next.className, '86---');
+            }
+
+            turtorNavbar.uriAttemptTo = function (uriAnyMore=true) {
+                this.handleNavBtnClassName();
+                console.log(this.histories, '99---', this.index);
 //                console.log(this.cur, '100---');
-                    if (uriAnyMore) {
-                        this.iframeTo();
-                    } else {
-                        alert('No more url in this side of history.');
-                    }
+                if (uriAnyMore) {
+                    this.iframeTo();
+                } else {
+                    alert('No more url in this side of history.');
                 }
+            }
 
-                //为教程按钮绑定事件以导航教程iframe
-                turtorNavbar.uriGo = function () {
-                    if (this.prevNavDirection !== 'next') this.prevNavDirection = 'next';
-                    var turtorUrlInput = document.getElementById('turtor-uri-input');
-                    var goBtn = document.getElementById('go-btn');
-                    console.log(turtorUrlInput, goBtn, turtorIframe, '32---');
-                    if (turtorUrlInput.value.trim() !== this.histories[this.histories.length - 1].uri) {
-                        console.log('1:', turtorUrlInput.value.trim(), '\n2:', this.histories[this.histories.length - 1].uri, '110---');
-                        this.cur = this.histories[this.histories.length] = new History(turtorUrlInput.value.trim(), this.histories.length); //empty object store the old uri.
-                        this.index = this.histories.length - 1;
-                        console.log(this.cur, '111---');
-                        console.log(this.histories, '108---');
+            //为教程按钮绑定事件以导航教程iframe
+            turtorNavbar.uriGo = function () {
+                if (this.prevNavDirection !== 'next') this.prevNavDirection = 'next';
+                var turtorUrlInput = document.getElementById('turtor-uri-input');
+                var goBtn = document.getElementById('go-btn');
+                console.log(turtorUrlInput, goBtn, turtorIframe, '32---');
+                if (turtorUrlInput.value.trim() !== this.histories[this.histories.length - 1].uri) {
+                    console.log('1:', turtorUrlInput.value.trim(), '\n2:', this.histories[this.histories.length - 1].uri, '110---');
+                    this.cur = this.histories[this.histories.length] = new History(turtorUrlInput.value.trim(), this.histories.length); //empty object store the old uri.
+                    this.index = this.histories.length - 1;
+                    console.log(this.cur, '111---');
+                    console.log(this.histories, '108---');
 //                var item = turtorUrlInput.value;
-                        //It looks like that, this centence is non-necessary, but store all History instance into a array, I feel well.
-                        //指定以不变的空间地址以存储当前once-history object.
-                        console.log(this.cur, '118---');
-                        this.uriAttemptTo(); //iframe jump.
-                    }
-                };
-                console.log(turtorNavbar.uriGo, '71---');
+                    //It looks like that, this centence is non-necessary, but store all History instance into a array, I feel well.
+                    //指定以不变的空间地址以存储当前once-history object.
+                    console.log(this.cur, '118---');
+                    this.uriAttemptTo(); //iframe jump.
+                }
+            };
+            console.log(turtorNavbar.uriGo, '71---');
 
-                function deepCloneObj(oldObj) {
-                    console.log(oldObj, '94---');
-                    var temp = JSON.stringify(oldObj);
+            function deepCloneObj(oldObj) {
+                console.log(oldObj, '94---');
+                var temp = JSON.stringify(oldObj);
 //                console.log(JSON, '/n-------95---------/n', temp);
 //                return JSON.parse(temp);
-                    console.log(JSON.parse(JSON.stringify(oldObj)), '97---');
-                    return JSON.parse(JSON.stringify(oldObj));
-                }
+                console.log(JSON.parse(JSON.stringify(oldObj)), '97---');
+                return JSON.parse(JSON.stringify(oldObj));
+            }
 
 //
 //            function cloneObjLightOrDeep (deep=true, oldObj) {
@@ -230,105 +149,104 @@
 //                }, 2000);
 //            }
 
-                turtorNavbar.flashState = function () { //每次刷新教程iframe或修改教程iframe的src前都要执行
-                    console.log(this.histories, '151---');
-                    console.log(this.cur, '152---');
+            turtorNavbar.flashState = function () { //每次刷新教程iframe或修改教程iframe的src前都要执行
+                console.log(this.histories, '151---');
+                console.log(this.cur, '152---');
 //                if (this.index <= 0 || this.index >= this.histories.length) {
 //
 //                    return void 0;
 //                }
-                    switch (this.curNavDirection) {
-                        case 'back':
-                            if (this.index <= 0) return;
-                            console.group('testing this.cur');
-                            console.log(this.histories, '158---');
+                switch (this.curNavDirection) {
+                    case 'prev':
+                        if(this.index <= 0) return;
+                        console.group('testing this.cur');
+                        console.log(this.histories, '158---');
 //                        this.latest = cloneObjLightOrDeep(reverse, this.histories[this.index - 1]);
-                            console.log(this.index, '146---');
-                            this.histories[this.histories.length] = deepCloneObj(this.histories[this.index - 1]);
-                            console.log(this.cur, '160---');
-                            this.cur = this.histories[this.index - 1];
-                            this.index--;
-                            console.log(this.cur, '161');
-                            console.log(this.histories, '165---');
-                            console.groupEnd('testing this.cur');
-                            break;
-                        case 'next':
-                            console.group('testing this.histories');
-                            if (this.index >= this.histories.length - 1) return;
-                            console.log(this.index, '170---');
-                            console.log(this.cur, '171---');
+                        console.log(this.index, '146---');
+                        this.histories[this.histories.length] = deepCloneObj(this.histories[this.index - 1]);
+                        console.log(this.cur, '160---');
+                        this.cur = this.histories[this.index - 1];
+                        this.index--;
+                        console.log(this.cur, '161');
+                        console.log(this.histories, '165---');
+                        console.groupEnd('testing this.cur');
+                        break;
+                    case 'next':
+                        console.group('testing this.histories');
+                        if(this.index >= this.histories.length - 1) return;
+                        console.log(this.index, '170---');
+                        console.log(this.cur, '171---');
 //                        this.latest = deepCloneObj(this.histories[this.index + 1]);
-                            this.histories[this.histories.length] = deepCloneObj(this.histories[this.index - 1]);
-                            this.cur = this.histories[this.index + 1];
-                            this.index++;
-                            console.log(this.cur, '174---');
-                            console.groupEnd('testing this.histories');
-                            break;
-                        default:
-                    }
+                        this.histories[this.histories.length] = deepCloneObj(this.histories[this.index - 1]);
+                        this.cur = this.histories[this.index + 1];
+                        this.index++;
+                        console.log(this.cur, '174---');
+                        console.groupEnd('testing this.histories');
+                        break;
+                    default:
+                }
 //                this.histories.push(this.latest);
 //                var reverse = this.prevNavDirection !== this.curNavDirection;
 //                if (reverse) this.cur = this.latest;
-                    console.log(this.cur, '174---');
-                    console.log(this.histories, '175---');
-                };
+                console.log(this.cur, '174---');
+                console.log(this.histories, '175---');
+            };
 
-                turtorNavbar.uriBack = function (ev) {
-                    console.log(this, '160---');
-                    console.log(ev, '145---');
-                    console.log(this.cur, '176---');
-                    if (this.index <= 0) { //如果索引为0， 向uriToOrDisable传入false，使后退按钮className as disabled;
-                        this.uriAttemptTo(false);
-                    } else {
-                        this.prevNavDirection = this.curNavDirection;
-                        this.curNavDirection = 'back';
-                        console.log(this.cur, '186---');
-                        Promise.resolve(turtorNavbar.flashState())
-                            .then(console.dir(this))
-                            .then(console.log(this, this.cur, '188---'))
-                            .then(this.uriAttemptTo());
+            turtorNavbar.uriBack = function (ev) {
+                console.log(this, '160---');
+                console.log(ev, '145---');
+                console.log(this.cur, '176---');
+                if (this.index <= 0) { //如果索引为0， 向uriToOrDisable传入false，使后退按钮className as disabled;
+                    this.uriAttemptTo(false);
+                } else {
+                    this.prevNavDirection = this.curNavDirection;
+                    this.curNavDirection = 'prev';
+                    console.log(this.cur, '186---');
+                    Promise.resolve(turtorNavbar.flashState())
+                        .then(console.dir(this))
+                        .then(console.log(this, this.cur, '188---'))
+                        .then(this.uriAttemptTo());
 //                    turtorNavbar.flashState();
 //                    this.uriAttemptTo();
-                    }
-                };
-                console.log(turtorNavbar.uriBack, '85---');
+                }
+            };
+            console.log(turtorNavbar.uriBack, '85---');
 
-                turtorNavbar.uriForward = function (ev) {
-                    if (this.index >= this.histories.length - 1) { //如果索引为this.histories.length-1， 向uriToOrDisable传入false，使后退按钮className as disabled;
-                        console.log(this.index, '212---');
-                        this.uriAttemptTo(false);
-                    } else {
-                        this.prevNavDirection = this.curNavDirection;
-                        this.curNavDirection = 'next';
-                        Promise.resolve(turtorNavbar.flashState())
-                            .then(console.log('214---'))
-                            .then(console.log(this.histories, 'past--212-past'))
-                            .then(console.log(this.cur, '213---'))
-                            .then(this.uriAttemptTo());
-                    }
-                };
-                console.log(turtorNavbar.uriForward, '91---');
+            turtorNavbar.uriForward = function (ev) {
+                if (this.index >= this.histories.length - 1) { //如果索引为this.histories.length-1， 向uriToOrDisable传入false，使后退按钮className as disabled;
+                    console.log(this.index, '212---');
+                    this.uriAttemptTo(false);
+                } else {
+                    this.prevNavDirection = this.curNavDirection;
+                    this.curNavDirection = 'next';
+                    Promise.resolve(turtorNavbar.flashState())
+                        .then(console.log('214---'))
+                        .then(console.log(this.histories, 'past--212-past'))
+                        .then(console.log(this.cur, '213---'))
+                        .then(this.uriAttemptTo());
+                }
+            };
+            console.log(turtorNavbar.uriForward, '91---');
 
-                ~function initTurtorIframeBar() {
-                    turtorNavbar.onclick = function (ev) {
-                        console.log(95);
-                        switch (ev.target.getAttribute('id')) {
-                            case 'back':
-                                this.uriBack(ev);
-                                break;
-                            case 'go-btn':
-                                console.log('101, go');
-                                this.uriGo(ev);
-                                break;
-                            case 'next':
-                                this.uriForward(ev);
-                                break;
-                        }
+            ~function initTurtorIframeBar() {
+                turtorNavbar.onclick = function (ev) {
+                    console.log(95);
+                    switch (ev.target.getAttribute('id')) {
+                        case 'prev':
+                            this.uriBack(ev);
+                            break;
+                        case 'go-btn':
+                            console.log('101, go');
+                            this.uriGo(ev);
+                            break;
+                        case 'next':
+                            this.uriForward(ev);
+                            break;
                     }
-                }();  //教程导航条的定义至此完成
+                }
+            }();  //教程导航条的定义至此完成
 
-            }, false
-        );
+        }, false);
         //
         //
         //        //以下定义在resize函数中执行的修复盒子尺寸的函数
@@ -462,7 +380,7 @@
             <div class="panel-heading">
                 <form id="turtor-navbar" style="display:flex; justify-content:space-around" class="form-inline">
                     <!--<label for="uri" class="sr-only">请键入教程地址</label>-->
-                    <button id="back" type="button" class="btn btn-default disabled">B</button>
+                    <button id="prev" type="button" class="btn btn-default disabled">B</button>
                     <button id="next" type="button" class="btn btn-default disabled">F</button>
                     <input id="turtor-uri-input" type="text" value="http://localhost:7777" style="width:80%"
                            class="form-control">
