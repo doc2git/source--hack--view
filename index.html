@@ -177,6 +177,7 @@
                         console.log(this.index, '170---');
                         console.log(this.cur, '171---');
 //                        this.latest = deepCloneObj(this.histories[this.index + 1]);
+                        this.histories[this.histories.length] = deepCloneObj(this.histories[this.index - 1]);
                         this.cur = this.histories[this.index + 1];
                         this.index++;
                         console.log(this.cur, '174---');
