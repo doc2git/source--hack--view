@@ -25,381 +25,167 @@
 
         .disabled {
             background-color: gray;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
     </style>
     <script data-hacker="doc2git">
 
+        //如果想让uri输入框中新的uri键入并且确定转跳前，所有的back和forward记录都保存在浏览历史中，请把改选项设置为true，否则保持默认值false；
+        window.config = {};
+        window.config.histoiesFollowLatestShake = false;
 
         String.prototype.trim = function () {
             return this.replace(/(^\s+|\s+$)/, '');
-        };
+        }
 
         document.addEventListener('DOMContentLoaded', function () {
 
-                var turtorIframe = document.getElementById('turtor-iframe');
-                console.log(turtorIframe, '35---');
-                var turtorNavbar = document.getElementById('turtor-navbar');
-                var turtorUrlInput = document.getElementById('turtor-uri-input');
-                var prev = document.getElementById('prev');
-//            console.log(turtorNavbar.index, '42---');
-                var next = document.getElementById('next');
-                turtorNavbar.prevNavDirections = 'next';
-                turtorNavbar.curNavDirections = 'null';
-                console.log(turtorNavbar, turtorNavbar.histories, '37+++');
-
-                turtorNavbar.checkObjUri = function (obj) {
-                    console.log(obj, '51---');
-                    console.log(this.mainHistories, this.backHistories, this.forwardHistories, '52--*******-+++===');
-                    if (Object.prototype.toString.call(obj) !== "[object Object]" && !obj.uri) {
-                        console.error('turtorNavbar.forwardHistories or turtorNavBar.backHistories pasted a non-object has own property which is valid uri.');
-                    } else {
-                        return true;
-                    }
-                };
+            var turtorIframe = document.getElementById('turtor-iframe');
+            var turtorNavbar = document.getElementById('turtor-navbar');
+            var turtorUrlInput = document.getElementById('turtor-uri-input');
+            var goBtn = document.getElementById('go-btn');
+            var prev = document.getElementById('prev');
+            var next = document.getElementById('next');
+            turtorNavbar.histories = [];
+            turtorNavbar.prevNavDirections = 'next';
+            turtorNavbar.curNavDirections = 'null';
+            turtorNavbar.shakeStack = [];
 
 
-                function Histories() {
-                    this.container = [];
-                    //以下4个函数属性都是要在伪实例中重写的方法
-                    //与上级Histories实例之间的通信
-                    //+
-                    this.pasteObj = function () {
-                    };
-                    //-
-                    this.shangjiao = function () {
-                    };
-                    //与下级Histories实例之间的通信
-                    //+
-                    this.pasteAry = function () {
-                    };
-                    //-
-                    this.cut = function () {
-                    };
+            //以下使用链式数据结构为iframe添加浏览历史记录
+            function History(uri = 'http://localhost:7776'.trim(), id = turtorNavbar.histories.length) {
+                this.uri = uri;
+                this.id = Date.now();
+            }
+
+            turtorNavbar.cur = turtorNavbar.histories[0] = new History();
+
+            turtorNavbar.checkHistoryObj = function (obj) {
+                if (Object.prototype.toString.call(obj) !== "[object Object]" && !obj.uri) {
+                    console.error('TurtorNavbar.forwardHistories or turtorNavBar.backHistories pasted a non-object has own property which is valid uri.');
+                } else if (!/\d{13}/.test(obj.id.toString())) {
+                    console.error('The id of History obj must be Number can be convert to 13 bit integer, but  was checked.')
+                } else if (!obj.uri) {
+                    console.error('The uri of History obj must be a uri string, but invalid uri was checked.')
+                } else {
+                    return true;
+                }
+            };
+
+            turtorNavbar.handleNavBtnDisability = function () {
+                function enableNavBtn(ele) {
+                    ele.className = ele.className.replace(/\bdisabled\b/, '').replace(/\s+/, ' ').replace(/(^\s+|\s+$)/, '');
+                    ele.enable = true;
                 }
 
-                //            turtorNavbar.histories = [];
-                function MainHistories() {
-                    Histories.call(this); //this.container is a array.
-                    //与上级Histories实例之间的通信
-                    //+
-                    this.pasteObj = function () {
-                    };
-                    //-
-                    history.shangjiao = function () {
-                    };
-                    //与下级Histories实例之间的通信
-                    //+
-                    this.pasteAry = function (passInAry) {
-                        console.log(passInAry, '91---+++---');
-                        passInAry = passInAry || [];
-                        passInAry.reverse(); //Direction change, so reverse passInAry.
-                        return this.container.concat(passInAry);
-                    };
-                    //-
-                    this.cut = function () {
-                        return this.container.pop(); //return a History instance which would be cut out;
-                    };
-                }
+                enableNavBtn(prev);
+                enableNavBtn(next);
 
-                function BackHistories() {
-                    Histories.call(this); //this.container is a array.
-                    //与上级Histories实例之间的通信
-                    //+
-                    this.pasteObj = function (passInObj) {
-                        return this.container.unshift(passInObj); //返回的是新增长度数组的长度
-                    };
-                    //-
-                    this.shangjiao = function () {
-                        console.log(this.container.splice(0) || [], '110---+++---'); //如果this.container为空数组，就返回一个空数组
-                        return this.container.splice(0) || []; //如果this.container为空数组，就返回一个空数组
-                    };
-                    //与下级Histories实例之间的通信
-                    //+
-                    this.pasteAry = function (passInAry) {
-                        console.log(passInAry, '113---');
-                        passInAry = passInAry || [];
-                        passInAry.reverse(); //Direction change, so reverse passInAry.
-                        console.log(passInAry.concat(this.container), '118---+++===');
-                        return passInAry.concat(this.container);
-                    };
-                    //-
-                    this.cut = function () {
-                        return this.container.shift(0);  //return a History instance which would be cut out;
-                    };
-                }
-
-                function ForwardHistories() {
-                    Histories.call(this); //this.container is a array.
-                    //+
-                    this.pasteObj = function (passInObj) {
-                        return this.container.push(passInObj); //返回的是新增长度数组的长度
-                    };
-                    //-
-                    this.shangjiao = function () {
-                        console.log(this.container.splice(0) || [], '131---+++---'); //如果this.container为空数组，就返回一个空数组
-                        return this.container.splice(0) || []; //如果this.container为空数组，就返回一个空数组
-                    };
-                    //+
-                    this.pasteAry = function (passInAry) {
-                    };
-                    //-
-                    this.cut = function () {
-                    };
-                }
-
-                turtorNavbar.mainHistories = new MainHistories;
-                turtorNavbar.mainIndex = 0;
-                turtorNavbar.backHistories = new BackHistories;
-                turtorNavbar.backIndex = 0;
-                turtorNavbar.forwardHistories = new ForwardHistories;
-                turtorNavbar.forwardIndex = 0;
-                console.log(turtorNavbar.mainHistories, '131---');
-                console.log(turtorNavbar.backHistories, '132---');
-                console.log(turtorNavbar.forwardHistories, '133---');
-
-                //Define History
-                function History(uri = 'http://localhost:7776'.trim()) {
-                    this.uri = uri;
-                }
-
-                console.log('163----');
-                turtorNavbar.cur = turtorNavbar.mainHistories.container[0] = new History(); //添加第一个历史记录,并turtorNavbar.cur指针指向该历史记录
-                console.log(turtorNavbar.cur, '165----');
-
-                turtorNavbar.iframeTo = function () {
-                    //turtorIframe.src = this.history.cur; //设定教程iframe的src
-                    console.log(turtorIframe, '73---');
-                    turtorIframe.src = this.cur.uri; //设定教程iframe的src
-                    console.log(turtorIframe.src, '75---');
-                };
-
-                turtorNavbar.removeNavBtnDisabledClass = function (ele) {
-                    ele.className = ele.className.replace(/\bdisabled\b/g, '').replace(/\s+/g, ' ').replace(/(^\s+|\s+$)/g, '');
-                    console.log(ele.className, '78---');
-                };
-
-                turtorNavbar.addNavBtnDisabledClass = function (ele) {
-                    ele.className = ele.className += ' disabled';
-                };
-
-//                turtorNavbar.handleNavBtnClassName = function () {
-//                    function removeDisabledClass(ele) {
-//                        ele.className = ele.className.replace(/\bdisabled\b/, '').replace(/\s+/, ' ').replace(/(^\s+|\s+$)/, '');
-//                        console.log(ele.className, '78---');
-//                    }
-//                    console.log(back, next, '80---');
-//                    removeDisabledClass(back);
-//                    removeDisabledClass(next);
-//                    console.log(this, '95---');
-//                    if (this.index <= 0) !(/\bdisabled\b/.test(back.className)) ? (back.className += ' disabled') : null;
-//                    if (this.index >= this.forwardHistories.length - 1) !(/\bdisabled\b/.test(next.className)) ? (next.className += ' disabled') : null;
-//                    console.log(back.className, next.className, '86---');
-//                };
-
-                turtorNavbar.uriAttemptTo = function (uriAnyMore = true) {
-                    this.handleNavBtnClassName();
-                    console.log(this.histories, '99---', this.index);
-//                console.log(this.cur, '100---');
-                    if (uriAnyMore) {
-                        this.iframeTo();
-                    } else {
-                        alert('No more url in this side of history.');
+                function disableNavBtn(ele) {
+                    ele.enable = false;
+                    if (!/\bdisabled\b/.test(ele.className)) {
+                        ele.className += ' disabled';
                     }
                 }
 
-                //为教程按钮绑定事件以导航教程iframe
-                turtorNavbar.uriGo = function () {
-                    if (this.prevNavDirection !== 'next') this.prevNavDirection = 'next';
-                    var goBtn = document.getElementById('go-btn');
-                    var that = this;
-                    console.log('215---');
-                    Promise.resolve(that.forwardHistories.shangjiao())
-                        .then(function (uriObjsAry) {
-                            console.log(uriObjsAry, '217---++');
-                            that.backHistories.pasteAry(uriObjsAry);
-                            console.log(uriObjsAry, '220--__++*');
-                            return that.backHistories.shangjiao();
-                        }).then(function (uriObjsAry) {
-                        that.mainHistories.pasteAry(uriObjsAry);
-                    })
-                        .then(function () {
-                            if (
-                                that.mainHistories.container.length <= 0
-                                || (that.mainHistories.container[that.mainHistories.container.length - 1]
-                                    && that.mainHistories.container[that.mainHistories.container.length - 1]['uri']
-                                    !== turtorUrlInput.value.trim()
-                                )
-                            ) {
-                                that.cur = that.mainHistories.container[that.mainHistories.container.length] = new History(turtorUrlInput.value.trim());
-                                if (that.checkObjUri(that.cur)) {
-                                    that.mainIndex = that.mainHistories.container.length - 1;
-                                    that.removeNavBtnDisabledClass(prev);
-                                    turtorIframe.src = turtorUrlInput.value = that.cur.uri; //设定教程iframe的src
-                                }
-                            }
-                        })
-                };
+                if (this.index <= 0) disableNavBtn(prev);
+                if (this.index >= this.histories.length - 1) disableNavBtn(next);
+            };
 
-                function deepCloneObj(oldObj) {
-                    console.log(oldObj, '94---');
-                    var temp = JSON.stringify(oldObj);
-//                console.log(JSON, '/n-------95---------/n', temp);
-//                return JSON.parse(temp);
-                    console.log(JSON.parse(JSON.stringify(oldObj)), '97---');
-                    return JSON.parse(JSON.stringify(oldObj));
+            function deepCloneObj(oldObj) {
+                var temp = JSON.stringify(oldObj);
+                return JSON.parse(JSON.stringify(oldObj));
+            }
+
+            turtorNavbar.uriAttemptTo = function (curObj) {
+                console.log(this.histories, '99----this.histories');
+                console.log(this.shakeStack, '100----this.shakeStack');
+                this.handleNavBtnDisability();
+                if (this.checkHistoryObj(curObj)) {
+                    turtorUrlInput.value = curObj.uri;
+                    if (window.config.histoiesFollowLatestShake && this.evTargetId !== 'go-btn') { //这是为当window.config.histoiesFollowLatestShake设置为true的情况保存来回浏览记录，在新的有效url键入并访问前push到turtorNavbar.histories中。
+                        var mirrorCur = deepCloneObj(curObj);
+                        mirrorCur.id = Date.now();
+                        this.shakeStack.push(mirrorCur);
+                    }
+                    turtorIframe.src = curObj.uri;
                 }
+            };
 
+            //为教程按钮绑定事件以导航教程iframe
+            turtorNavbar.uriGo = function () {
+//                if (this.prevNavDirection !== 'next') this.prevNavDirection = 'next';
+                if (this.histories[this.histories.length - 1] && this.histories[this.histories.length - 1].uri !== turtorUrlInput.value.trim()) {
+                    var maybeCur = new History(turtorUrlInput.value.trim(), Date.now()); //empty object store the old uri.
+                    if (this.checkHistoryObj(maybeCur)) {
+                        if (window.config.histoiesFollowLatestShake) {
+                            this.histories = this.histories.concat(this.shakeStack.splice(0));
+
+
+                        this.histories.push(maybeCur);
+                        this.index = this.histories.length - 1;
+                        this.cur = this.histories[this.index];
+                        this.uriAttemptTo(this.cur); //iframe jump.
+                    }
+                }
+            };
 //
-//            function cloneObjLightOrDeep (deep=true, oldObj) {
-//                  return deep ? deepCloneObj(oldObj) : oldObj;
-//            }
+//            turtorNavbar.flashState = function () { //每次刷新教程iframe或修改教程iframe的src前都要执行
+//                switch (this.curNavDirection) {
+//                    case 'prev':
+//                        if (this.index <= 0) return;
+//                        this.cur = this.histories[this.index - 1];
+//                        this.index--;
+//                        break;
+//                    case 'next':
+//                        if (this.index >= this.histories.length - 1) return;
+//                        this.cur = this.histories[this.index + 1];
+//                        this.index++;
+//                        break;
+//                    default:
+//                }
+//            };
 
-//            turtorNavbar.togglePlaceHolder = function (){
-//                var temp = turtorUrlInput.placeholder;
-//                turtorUrlInput.placeholder = '没有跟多历史记录了喔 :)';
-//                window.setTimeout(function () {
-//                    turtorUrlInput.placeholder = temp;
-//                }, 2000);
-//            }
+            turtorNavbar.uriBack = function (ev) {
+                if (prev.enable !== true) return;
+                this.index--;
+                this.cur = this.histories[this.index];
+                this.uriAttemptTo(this.cur);
+                if (this.index <= 0) { //如果索引为0， 向uriToOrDisable传入false，使后退按钮className as disabled;
+                    console.log('这是最早的历史记录了.');
+                }
+            };
+            turtorNavbar.uriForward = function (ev) {
+                if (next.enable !== true) return;
+                this.index++;
+                this.cur = this.histories[this.index];
+                this.uriAttemptTo(this.cur);
+                if (this.index >= this.histories.length - 1) { //如果索引为this.histories.length-1， 向uriToOrDisable传入false，使后退按钮className as disabled;
+                    console.log('这是最新的历史记录了.');
+                }
+            };
 
-//                turtorNavbar.flashState = function () { //每次刷新教程iframe或修改教程iframe的src前都要执行
-//                    switch (this.curNavDirection) {
-//                        case 'back':
-//                            if (this.index <= 0) return;
-//                            this.histories[this.histories.length] = deepCloneObj(this.histories[this.index - 1]);
-//                            this.cur = this.histories[this.index - 1];
-//                            this.index--;
-//                            break;
-//                        case 'next':
-////                            if (this.index >= this.histories.length - 1) return;
-//                            this.forwardHistories[this.histories.length] = deepCloneObj(this.histories[this.index - 1]);
-//                            this.cur = this.histories[this.index + 1];
-//                            this.index++;
-//                            break;
-//                        default:
-//                    }
-//                };
+            ~function initTurtorIframeBar() {
+                turtorNavbar.onclick = function (ev) {
+                    this.evTargetId = ev.target.getAttribute('id');
+                    switch (this.evTargetId) {
+                        case 'prev':
+                            this.uriBack(ev);
+                            break;
+                        case 'go-btn':
+                            this.uriGo(ev);
+                            break;
+                        case 'next':
+                            this.uriForward(ev);
+                            break;
+                    }
+                }
+            }();  //教程导航条的定义至此完成
 
-//                turtorNavbar.mainHistories = new MainHistories;
-//                turtorNavbar.backHistories = new BackHistories;
-//                turtorNavbar.forwardHistories = new ForwardHistories;
-                turtorNavbar.uriBack = function (ev) {
-                    if (prev.disabled) {
-                        console.log('the disabled props of prev button element is true. so tutorNavBar.urlBack returned at the beginning.');
-                        return void 0;
-                    }
-                    if (this.backIndex >= 0) {
-                        this.backIndex--;
-                        this.forwardIndex--;
-                    }
-                    if (this.backIndex < 0) {
-                        this.forwardIndex++;
-                        this.backIndex++;
-                        console.log(this.backIndex, '300-----');
-                        if (this.forwardHistories.container.length > 0) { //if there are objects in this.forwardHistories, fetch all obj into a array in this.forwardHistories
-                            var tempAry = this.forwardHistories.shangjiao();
-                            this.backHistories.pasteAry(tempAry);
-                        } else if (this.mainHistories.container.length > 0) { //if there is any valid object in this.mainHistories, fetch a obj in this.forwardHistories
-                            var tempObj = this.mainHistories.cut();
-                            this.backHistories.pasteObj(tempObj);
-                        } else {
-                            prev.disabled = true;
-                            this.addNavBtnDisabledClass(prev);
-                            alert('No more url in this side of history.');
-                            return void 0;
-                        }
-                    }
-                    console.log(this.backIndex);
-                    this.cur = this.backHistories.container[this.backIndex];
-                    console.log(this.cur, '321---+++===--');
-                    if (this.checkObjUri(this.cur)) {
-                        next.disabled = false;
-                        this.removeNavBtnDisabledClass(next);
-                        turtorIframe.src = turtorUrlInput.value = this.cur.uri; //设定教程iframe的src
-                    }
-//                    console.log(this, '160---');
-//                    console.log(ev, '145---');
-//                    console.log(this.cur, '176---');
-//                    if (this.index <= 0) { //如果索引为0， 向uriToOrDisable传入false，使后退按钮className as disabled;
-//                        this.uriAttemptTo(false);
-//                    } else {
-//                        this.prevNavDirection = this.curNavDirection;
-//                        this.curNavDirection = 'back';
-//                        console.log(this.cur, '186---');
-//                        Promise.resolve(turtorNavbar.flashState())
-//                            .then(console.dir(this))
-//                            .then(console.log(this, this.cur, '188---'))
-//                            .then(this.uriAttemptTo());
-//                    }
-                };
-                console.log(turtorNavbar.uriBack, '85---');
-
-                turtorNavbar.uriForward = function (ev) {
-                    if (next.disabled) {
-                        console.log('the disabled props of next button element is true. so tutorNavBar.urlForward returned at the beginning.');
-                        return void 0;
-                    }
-                    console.log(this.forwardIndex, '349---+++***');
-                    console.log(this.forwardIndex, '351---+++***');
-                    console.log(this.forwardHistories.container.length, '352---+++***');
-                    if (this.forwardIndex < this.forwardHistories.container.length - 1) {
-                        this.forwardIndex++;
-                        this.backIndex++;
-                    }
-                    if (this.backHistories.container.length <= 0
-                       || this.forwardIndex > this.forwardHistories.container.length - 1) {
-                        var tempObj = this.backHistories.cut();
-                        this.forwardHistories.pasteObj(tempObj);
-                        this.cur = this.forwardHistories.container[this.forwardIndex];
-//                        this.forwardIndex++;
-                    } else { //添加uri对象没成功
-//                        this.forwardIndex--; //复原该函数体内第一次修改this.forwardIndex的影响
-                        next.disabled = true;
-                        this.addNavBtnDisabledClass(next);
-                        alert('No more url in this side of history.');
-                        return void 0;
-                    }
-                    console.log(this.cur, '364---(((___++');
-                    if (this.checkObjUri(this.cur)) {
-                        prev.disabled = false;
-                        this.removeNavBtnDisabledClass(prev);
-                        turtorIframe.src = turtorUrlInput.value = this.cur.uri; //设定教程iframe的src
-                    }
-//                    if (this.index >= this.histories.length - 1) { //如果索引为this.histories.length-1， 向uriToOrDisable传入false，使后退按钮className as disabled;
-//                        console.log(this.index, '212---');
-//                        this.uriAttemptTo(false);
-//                    } else {
-//                        this.prevNavDirection = this.curNavDirection;
-//                        this.curNavDirection = 'next';
-//                        Promise.resolve(turtorNavbar.flashState())
-//                            .then(console.log('214---'))
-//                            .then(console.log(this.histories, 'past--212-past'))
-//                            .then(console.log(this.cur, '213---'))
-//                            .then(this.uriAttemptTo());
-//                    }
-                };
-                console.log(turtorNavbar.uriForward, '91---');
-
-                ~function initTurtorIframeBar() {
-                    turtorNavbar.onclick = function (ev) {
-                        console.log(95);
-                        switch (ev.target.getAttribute('id')) {
-                            case 'prev':
-                                this.uriBack(ev);
-                                break;
-                            case 'go-btn':
-                                console.log('101, go');
-                                this.uriGo(ev);
-                                break;
-                            case 'next':
-                                this.uriForward(ev);
-                                break;
-                        }
-                    }
-                }();  //教程导航条的定义至此完成
-
-            }, false
-        );
+        }, false);
         //
         //
         //        //以下定义在resize函数中执行的修复盒子尺寸的函数
@@ -535,7 +321,7 @@
                     <!--<label for="uri" class="sr-only">请键入教程地址</label>-->
                     <button id="prev" type="button" class="btn btn-default disabled">B</button>
                     <button id="next" type="button" class="btn btn-default disabled">F</button>
-                    <input id="turtor-uri-input" type="text" value="http://localhost:7777" style="width:80%"
+                    <input id="turtor-uri-input" type="text" value="http://localhost:7776" style="width:80%"
                            class="form-control">
                     <button id="go-btn" type="button" class="btn btn-default">GO!</button>
 
