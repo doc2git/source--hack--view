@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <title>Edit code here, view the output write away!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./bootstrap.min.css">
     <script src="./codemirror.min.js"></script>
-    <link rel="stylesheet" href="//cdn.bootcss.com/codemirror/5.2.0/codemirror.min.css">
+    <link rel="stylesheet" href="./codemirror.min.css">
     <script src="./htmlmixed.min.js"></script>
     <script src="./css.min.js"></script>
     <script src="./javascript.min.js"></script>
@@ -16,34 +16,6 @@
     <!--[if lt IE 9]>
     <script src="./html5.min.js"></script>
     <![endif]-->
-    <!--Next script is wrote by doc2git, which is writing for fix the js pulubic function demensions of element. It will be call when Dom loaded by mind.-->
-    <div class="script-wrapper">
-        <!---->
-        <!--<script data-hacker="doc2git">-->
-        <!--function doc2git_textareaReRender() {-->
-        <!--var textarea__panel_body = document.getElementById('doc2git&#45;&#45;textarea&#45;&#45;panel-body');-->
-        <!--//            console.log(textarea__panel_body, '26-&#45;&#45;');-->
-        <!--var codeMirror__cm_s_default = textarea__panel_body.getElementsByClassName('CodeMirror cm-s-default')[0];-->
-        <!--//            console.log(codeMirror__cm_s_default, '27-&#45;&#45;');-->
-        <!--codeMirror__cm_s_default.style.height = '300px';-->
-        <!--}-->
-
-        <!--function doc2git_OutputReRender() {-->
-        <!--var outputPanelBody = document.getElementById('doc2git&#45;&#45;output&#45;&#45;panel-body');-->
-        <!--console.log(outputPanelBody, 26);-->
-        <!--var outputIframe = outputPanelBody.getElementsByTagName('iframe')[0];-->
-        <!--if (outputIframe) {-->
-        <!--outputIframe.style.minHeight = '100px';-->
-        <!--outputIframe.style.height = '100px';-->
-        <!--//                console.log( '30+_++', outputIframe.style.minHeight, outputIframe.style.height);-->
-        <!--}-->
-        <!--var iframewrapper = document.getElementById('iframewrapper');-->
-        <!--iframewrapper.style.minHeight = '100px';-->
-        <!--iframewrapper.style.height = '100px';-->
-        <!--}-->
-        <!--</script>-->
-        <!---->
-    </div>
 
     <style>
         body {
@@ -99,7 +71,6 @@
         }
 
         .logo h1 {
-            /*background-image: url(/images/logo-domain-white.png);*/
             background-repeat: no-repeat;
             text-indent: -9999px;
             width: 160px;
@@ -143,18 +114,13 @@
     </div>
 </nav>
 
-
-<!--<iframe class="col-sm-6" src="https://cn.vuejs.org/v2/guide/" width="300px" ; height="594px" frameborder="0"></iframe>-->
-
 <div class="container">
-
 
     <div id="doc2git--left-box" style="height:100%; display:flex; flex-direction:column; align-content:space-between"
          class="col-sm-6">
         <div style="flex:0" class="panel panel-default">
             <div id="wrapper-turtor-navbar" class="panel-heading">
                 <form id="turtor-navbar" style="display:flex; justify-content:space-around" class="form-inline">
-                    <!--<label for="uri" class="sr-only">请键入教程地址</label>-->
                     <button id="prev" type="button" class="btn btn-default disabled">B</button>
                     <button id="next" type="button" class="btn btn-default disabled">F</button>
                     <input id="turtor-uri-input" type="text" value="http://localhost:7776" style="width:80%"
@@ -163,15 +129,11 @@
 
                 </form>
             </div>
-            <!--<div class="panel-body">-->
-            <!--<div id="iframewrapper"></div>-->
-            <!--</div>-->
         </div>
         <iframe id="turtor-iframe" src="http://localhost:7776" width="100%" style="flex:1"
                 frameborder="0"></iframe>
     </div>
 
-    <!--<div class="col-sm-6">-->
     <div id="doc2git--right-box" class="col-sm-6">
 
         <div class="panel panel-default">
@@ -255,7 +217,6 @@ new Vue({
     <!--})();-->
     <!--</script>-->
 </div>
-<!--Bellow code attemp to get the output iframe and hack its height, but when output was changing , the height will resume, so this idea is worse.-->
 </body>
 </html>
 
@@ -268,9 +229,6 @@ new Vue({
     String.prototype.trim = function () {
         return this.replace(/(^\s+|\s+$)/, '');
     };
-
-
-    //        document.addEventListener('DOMContentLoaded', function () {
 
     var turtorIframe = document.getElementById('turtor-iframe');
     var turtorNavbar = document.getElementById('turtor-navbar');
@@ -344,7 +302,7 @@ new Vue({
 
     //为教程按钮定义事件函数以导航教程iframe
     turtorNavbar.uriGo = function () {
-//                if (this.prevNavDirection !== 'next') this.prevNavDirection = 'next';
+//                if (this.prevNavDirectione!== 'next') this.prevNavDirection = 'next';
         if (this.histories[this.histories.length - 1] && this.histories[this.histories.length - 1].uri !== turtorUrlInput.value.trim()) {
             var maybeCur = new History(turtorUrlInput.value.trim(), Date.now()); //empty object store the old uri.
             if (this.checkHistoryObj(maybeCur)) {
