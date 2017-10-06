@@ -112,10 +112,10 @@
     <style data-author="doc2git">
         #doc2git--left-box,
         #doc2git--right-box {
-            scroll: auto;
-            overflow-y: hidden;
+            overflow-y: scroll;
         }
-        #doc2git--right-box .panel:nth-last-of-type(1){
+
+        #doc2git--right-box .panel:nth-last-of-type(1) {
             margin-bottom: 0;
         }
     </style>
@@ -246,194 +246,209 @@ new Vue({
 </body>
 </html>
 
-    <script data-hacker="doc2git">
+<script data-hacker="doc2git">
 
-        //如果想让uri输入框中新的uri键入并且确定转跳前，所有的back和forward记录都保存在浏览历史中，请把改选项设置为true，否则保持默认值false；
-        window.config = {};
-        window.config.histoiesFollowLatestShake = false;
+    //如果想让uri输入框中新的uri键入并且确定转跳前，所有的back和forward记录都保存在浏览历史中，请把改选项设置为true，否则保持默认值false；
+    window.config = {};
+    window.config.histoiesFollowLatestShake = false;
 
-        String.prototype.trim = function () {
-            return this.replace(/(^\s+|\s+$)/, '');
-        };
-
-
-//        document.addEventListener('DOMContentLoaded', function () {
-
-            var turtorIframe = document.getElementById('turtor-iframe');
-            var turtorNavbar = document.getElementById('turtor-navbar');
-            var turtorUrlInput = document.getElementById('turtor-uri-input');
-            var goBtn = document.getElementById('go-btn');
-            var prev = document.getElementById('prev');
-            var next = document.getElementById('next');
-            turtorNavbar.histories = [];
-            turtorNavbar.prevNavDirections = 'next';
-            turtorNavbar.curNavDirections = 'null';
-            turtorNavbar.shakeStack = [];
+    String.prototype.trim = function () {
+        return this.replace(/(^\s+|\s+$)/, '');
+    };
 
 
-            //以下使用链式数据结构为iframe添加浏览历史记录
-            function History(uri = 'http://localhost:7776'.trim(), id = turtorNavbar.histories.length) {
-                this.uri = uri;
-                this.id = Date.now();
+    //        document.addEventListener('DOMContentLoaded', function () {
+
+    var turtorIframe = document.getElementById('turtor-iframe');
+    var turtorNavbar = document.getElementById('turtor-navbar');
+    var turtorUrlInput = document.getElementById('turtor-uri-input');
+    var goBtn = document.getElementById('go-btn');
+    var prev = document.getElementById('prev');
+    var next = document.getElementById('next');
+    turtorNavbar.histories = [];
+    turtorNavbar.prevNavDirections = 'next';
+    turtorNavbar.curNavDirections = 'null';
+    turtorNavbar.shakeStack = [];
+
+
+    //以下使用链式数据结构为iframe添加浏览历史记录
+    function History(uri = 'http://localhost:7776'.trim(), id = turtorNavbar.histories.length) {
+        this.uri = uri;
+        this.id = Date.now();
+    }
+
+    turtorNavbar.cur = turtorNavbar.histories[0] = new History();
+
+    turtorNavbar.checkHistoryObj = function (obj) {
+        if (Object.prototype.toString.call(obj) !== "[object Object]" && !obj.uri) {
+            console.error('TurtorNavbar.forwardHistories or turtorNavBar.backHistories pasted a non-object has own property which is valid uri.');
+        } else if (!/\d{13}/.test(obj.id.toString())) {
+            console.error('The id of History obj must be Number can be convert to 13 bit integer, but  was checked.')
+        } else if (!obj.uri) {
+            console.error('The uri of History obj must be a uri string, but invalid uri was checked.')
+        } else {
+            return true;
+        }
+    };
+
+    turtorNavbar.handleNavBtnDisability = function () {
+        function enableNavBtn(ele) {
+            ele.className = ele.className.replace(/\bdisabled\b/, '').replace(/\s+/, ' ').replace(/(^\s+|\s+$)/, '');
+            ele.enable = true;
+        }
+
+        enableNavBtn(prev);
+        enableNavBtn(next);
+
+        function disableNavBtn(ele) {
+            ele.enable = false;
+            if (!/\bdisabled\b/.test(ele.className)) {
+                ele.className += ' disabled';
             }
+        }
 
-            turtorNavbar.cur = turtorNavbar.histories[0] = new History();
+        if (this.index <= 0) disableNavBtn(prev);
+        if (this.index >= this.histories.length - 1) disableNavBtn(next);
+    };
 
-            turtorNavbar.checkHistoryObj = function (obj) {
-                if (Object.prototype.toString.call(obj) !== "[object Object]" && !obj.uri) {
-                    console.error('TurtorNavbar.forwardHistories or turtorNavBar.backHistories pasted a non-object has own property which is valid uri.');
-                } else if (!/\d{13}/.test(obj.id.toString())) {
-                    console.error('The id of History obj must be Number can be convert to 13 bit integer, but  was checked.')
-                } else if (!obj.uri) {
-                    console.error('The uri of History obj must be a uri string, but invalid uri was checked.')
-                } else {
-                    return true;
-                }
-            };
+    function deepCloneObj(oldObj) {
+        var temp = JSON.stringify(oldObj);
+        return JSON.parse(JSON.stringify(oldObj));
+    }
 
-            turtorNavbar.handleNavBtnDisability = function () {
-                function enableNavBtn(ele) {
-                    ele.className = ele.className.replace(/\bdisabled\b/, '').replace(/\s+/, ' ').replace(/(^\s+|\s+$)/, '');
-                    ele.enable = true;
-                }
-
-                enableNavBtn(prev);
-                enableNavBtn(next);
-
-                function disableNavBtn(ele) {
-                    ele.enable = false;
-                    if (!/\bdisabled\b/.test(ele.className)) {
-                        ele.className += ' disabled';
-                    }
-                }
-
-                if (this.index <= 0) disableNavBtn(prev);
-                if (this.index >= this.histories.length - 1) disableNavBtn(next);
-            };
-
-            function deepCloneObj(oldObj) {
-                var temp = JSON.stringify(oldObj);
-                return JSON.parse(JSON.stringify(oldObj));
+    turtorNavbar.uriAttemptTo = function (curObj) {
+        this.handleNavBtnDisability();
+        if (this.checkHistoryObj(curObj)) {
+            turtorUrlInput.value = curObj.uri;
+            if (window.config.histoiesFollowLatestShake && this.evTargetId !== 'go-btn') { //这是为当window.config.histoiesFollowLatestShake设置为true的情况保存来回浏览记录，在新的有效url键入并访问前push到turtorNavbar.histories中。
+                var mirrorCur = deepCloneObj(curObj);
+                mirrorCur.id = Date.now();
+                this.shakeStack.push(mirrorCur);
             }
+            turtorIframe.src = curObj.uri;
+        }
+    };
 
-            turtorNavbar.uriAttemptTo = function (curObj) {
-                this.handleNavBtnDisability();
-                if (this.checkHistoryObj(curObj)) {
-                    turtorUrlInput.value = curObj.uri;
-                    if (window.config.histoiesFollowLatestShake && this.evTargetId !== 'go-btn') { //这是为当window.config.histoiesFollowLatestShake设置为true的情况保存来回浏览记录，在新的有效url键入并访问前push到turtorNavbar.histories中。
-                        var mirrorCur = deepCloneObj(curObj);
-                        mirrorCur.id = Date.now();
-                        this.shakeStack.push(mirrorCur);
-                    }
-                    turtorIframe.src = curObj.uri;
-                }
-            };
-
-            //为教程按钮定义事件函数以导航教程iframe
-            turtorNavbar.uriGo = function () {
+    //为教程按钮定义事件函数以导航教程iframe
+    turtorNavbar.uriGo = function () {
 //                if (this.prevNavDirection !== 'next') this.prevNavDirection = 'next';
-                if (this.histories[this.histories.length - 1] && this.histories[this.histories.length - 1].uri !== turtorUrlInput.value.trim()) {
-                    var maybeCur = new History(turtorUrlInput.value.trim(), Date.now()); //empty object store the old uri.
-                    if (this.checkHistoryObj(maybeCur)) {
-                        if (window.config.histoiesFollowLatestShake) {
-                            this.histories = this.histories.concat(this.shakeStack.splice(0));
-                        }
-                        this.histories.push(maybeCur);
-                        this.index = this.histories.length - 1;
-                        this.cur = this.histories[this.index];
-                        this.uriAttemptTo(this.cur); //iframe jump.
-                    }
+        if (this.histories[this.histories.length - 1] && this.histories[this.histories.length - 1].uri !== turtorUrlInput.value.trim()) {
+            var maybeCur = new History(turtorUrlInput.value.trim(), Date.now()); //empty object store the old uri.
+            if (this.checkHistoryObj(maybeCur)) {
+                if (window.config.histoiesFollowLatestShake) {
+                    this.histories = this.histories.concat(this.shakeStack.splice(0));
                 }
-            };
-
-            turtorNavbar.uriBack = function (ev) {
-                if (prev.enable !== true) return;
-                this.index--;
+                this.histories.push(maybeCur);
+                this.index = this.histories.length - 1;
                 this.cur = this.histories[this.index];
-                this.uriAttemptTo(this.cur);
-                if (this.index <= 0) { //如果索引为0， 向uriToOrDisable传入false，使后退按钮className as disabled;
-                    console.log('这是最早的历史记录了.');
-                }
-            };
-            turtorNavbar.uriForward = function (ev) {
-                if (next.enable !== true) return;
-                this.index++;
-                this.cur = this.histories[this.index];
-                this.uriAttemptTo(this.cur);
-                if (this.index >= this.histories.length - 1) { //如果索引为this.histories.length-1， 向uriToOrDisable传入false，使后退按钮className as disabled;
-                    console.log('这是最新的历史记录了.');
-                }
-            };
-
-            ~function initTurtorIframeBar() {
-                turtorNavbar.onclick = function (ev) {
-                    this.evTargetId = ev.target.getAttribute('id');
-                    switch (this.evTargetId) {
-                        case 'prev':
-                            this.uriBack(ev);
-                            break;
-                        case 'go-btn':
-                            this.uriGo(ev);
-                            break;
-                        case 'next':
-                            this.uriForward(ev);
-                            break;
-                    }
-                }
-            }();  //教程导航条的定义至此完成
-
-
-            //以下定义在resize函数中执行的修复盒子尺寸的函数
-            function doc2git_textareaReRender() {
-                var textarea__panel_body = document.getElementById('doc2git--textarea--panel-body');
-                var codeMirror__cm_s_default = textarea__panel_body.getElementsByClassName('CodeMirror cm-s-default')[0];
-                //            console.log(codeMirror__cm_s_default, '27---');
-                codeMirror__cm_s_default.style.height = 'auto';
+                this.uriAttemptTo(this.cur); //iframe jump.
             }
+        }
+    };
 
-            window.doc2git_textareaReRender = doc2git_textareaReRender;
+    turtorNavbar.uriBack = function (ev) {
+        if (prev.enable !== true) return;
+        this.index--;
+        this.cur = this.histories[this.index];
+        this.uriAttemptTo(this.cur);
+        if (this.index <= 0) { //如果索引为0， 向uriToOrDisable传入false，使后退按钮className as disabled;
+            console.log('这是最早的历史记录了.');
+        }
+    };
+    turtorNavbar.uriForward = function (ev) {
+        if (next.enable !== true) return;
+        this.index++;
+        this.cur = this.histories[this.index];
+        this.uriAttemptTo(this.cur);
+        if (this.index >= this.histories.length - 1) { //如果索引为this.histories.length-1， 向uriToOrDisable传入false，使后退按钮className as disabled;
+            console.log('这是最新的历史记录了.');
+        }
+    };
 
-            function doc2git_OutputReRender() {
-                var outputPanelBody = document.getElementById('doc2git--output--panel-body');
-                var outputIframe = outputPanelBody.getElementsByTagName('iframe')[0];
-                if (outputIframe) {
-                    outputIframe.style.minHeight = '100px';
-                    outputIframe.style.height = '100px';
-                }
-                var iframewrapper = document.getElementById('iframewrapper');
-                iframewrapper.style.minHeight = '100px';
-                iframewrapper.style.height = '100px';
+    ~function initTurtorIframeBar() {
+        turtorNavbar.onclick = function (ev) {
+            this.evTargetId = ev.target.getAttribute('id');
+            switch (this.evTargetId) {
+                case 'prev':
+                    this.uriBack(ev);
+                    break;
+                case 'go-btn':
+                    this.uriGo(ev);
+                    break;
+                case 'next':
+                    this.uriForward(ev);
+                    break;
             }
+        }
+    }();  //教程导航条的定义至此完成
 
-            window.doc2git_OutputReRender = doc2git_OutputReRender;
 
-            function doc2git_textareaBoxKeepWidth() {
-//                var textareaBox = document.getElementById('doc2git--texarea-box');
-//                var outputPanelBody = document.getElementById('doc2git--output--panel-body');
-//                var mustWidth = window.getComputedStyle(outputPanelBody).width;
-//                textareaBox.style.width = mustWidth;
-            }
+    //以下定义在resize函数中执行的修复盒子尺寸的函数
+    var leftBox = document.getElementById('doc2git--left-box');
+    var rightBox = document.getElementById('doc2git--right-box');
 
-            window.doc2git_textareaBoxKeepWidth = doc2git_textareaBoxKeepWidth;
+    function doc2git_textareaReRender() {
+        var textarea__panel_body = document.getElementById('doc2git--textarea--panel-body');
+        var codeMirror__cm_s_default = textarea__panel_body.getElementsByClassName('CodeMirror cm-s-default')[0];
+        //            console.log(codeMirror__cm_s_default, '27---');
+        codeMirror__cm_s_default.style.height = 'auto';
+    }
 
-            function doc2git_leftRightBoxKeepDimension() {
-                var leftBox = document.getElementById('doc2git--left-box');
-                var rightBox = document.getElementById('doc2git--right-box');
+    window.doc2git_textareaReRender = doc2git_textareaReRender;
+
+    function doc2git_OutputReRender() {
+        var outputPanelBody = document.getElementById('doc2git--output--panel-body');
+        var outputIframe = outputPanelBody.getElementsByTagName('iframe')[0];
+        if (outputIframe) {
+            outputIframe.style.minHeight = '100px';
+            outputIframe.style.height = '100px';
+        }
+        var iframewrapper = document.getElementById('iframewrapper');
+        iframewrapper.style.minHeight = '100px';
+        iframewrapper.style.height = '100px';
+    }
+
+    window.doc2git_OutputReRender = doc2git_OutputReRender;
+
+    function doc2git_textareaBoxKeepDimension() {
+        var textareaBox = document.getElementById('doc2git--textarea--panel-body');
+        var outputPanelBody = document.getElementById('doc2git--output--panel-body');
+        var mustWidth = window.getComputedStyle(outputPanelBody).width;
+        window.doc2git_textarea_mustHeight = window.doc2git_textarea_mustHeight || window.getComputedStyle(textareaBox).height;
+        textareaBox.style.width = mustWidth;
+        var textarea_CodeMirror = textareaBox.getElementsByClassName('CodeMirror-code')[0];
+        textarea_CodeMirror.style.height = window.doc2git_textarea_mustHeight;
+        textarea_CodeMirror.style.overflowY = 'scroll';
+        var textarea_CodeMirrorSizer = textareaBox.getElementsByClassName('CodeMirror-sizer')[0];
+        console.log(textarea_CodeMirrorSizer.minHeight, '423----');
+        setTimeout(function(){
+
+            textarea_CodeMirrorSizer.style.minHeight = 100 + 'px';
+            console.log(textarea_CodeMirrorSizer.style.minHeight, '427---');
+            }, 1000
+
+        );
+//        textarea_CodeMirrorSizer.style.overflowY = 'scroll';
+//        textareaBox.style.overflowY = 'scroll';
+    }
+
+    window.doc2git_textareaBoxKeepDimension = doc2git_textareaBoxKeepDimension;
+
+    function doc2git_leftRightBoxKeepDimension() {
 //                    var mustHeight = window.getComputedStyle(leftBox).height;
-                var mustHeight = window.getComputedStyle(rightBox).height;
-                leftBox.style.height = mustHeight;
-                var mustWidth = window.getComputedStyle(rightBox).width;
-                leftBox.style.width = mustWidth;
-                var wrapperTurtorNavbar = document.getElementById('wrapper-turtor-navbar');
-                turtorIframe.style.height = leftBox.style.height - wrapperTurtorNavbar.style.height;
-            }
+        var mustHeight = window.getComputedStyle(rightBox).height;
+        leftBox.style.height = mustHeight;
+        var mustWidth = window.getComputedStyle(rightBox).width;
+        leftBox.style.width = mustWidth;
+        var wrapperTurtorNavbar = document.getElementById('wrapper-turtor-navbar');
+        turtorIframe.style.height = leftBox.style.height - wrapperTurtorNavbar.style.height;
+    }
 
-            window.doc2git_leftRightBoxKeepDimension = doc2git_leftRightBoxKeepDimension;
+    window.doc2git_leftRightBoxKeepDimension = doc2git_leftRightBoxKeepDimension;
 
 
-
-//        }, false);
-    </script>
+    //        }, false);
+</script>
 
 
 <script data-hacker="doc2git">
@@ -441,7 +456,6 @@ new Vue({
 </script>
 
 <script>
-
 
 
     var mixedMode = {
@@ -471,64 +485,63 @@ new Vue({
     var x = 0;
 
 
-
-        function autodivheight() {
-            var winHeight = 0;
-            if (window.innerHeight) {
-                winHeight = window.innerHeight;
-            } else if ((document.body) && (document.body.clientHeight)) {
-                winHeight = document.body.clientHeight;
-            }
-            //通过深入Document内部对body进行检测，获取浏览器窗口高度
-            if (document.documentElement && document.documentElement.clientHeight) {
-                winHeight = document.documentElement.clientHeight;
-            }
-            height = winHeight * 0.68
-            editor.setSize('100%', height);
-            document.getElementById("iframeResult").style.height = height + "px";
-            doc2git_textareaReRender();
-            doc2git_OutputReRender();
-//            doc2git_textareaBoxKeepWidth();
-            doc2git_leftRightBoxKeepDimension();
+    function autodivheight() {
+        var winHeight = 0;
+        if (window.innerHeight) {
+            winHeight = window.innerHeight;
+        } else if ((document.body) && (document.body.clientHeight)) {
+            winHeight = document.body.clientHeight;
         }
+        //通过深入Document内部对body进行检测，获取浏览器窗口高度
+        if (document.documentElement && document.documentElement.clientHeight) {
+            winHeight = document.documentElement.clientHeight;
+        }
+        height = winHeight * 0.68
+        editor.setSize('100%', height);
+        document.getElementById("iframeResult").style.height = height + "px";
+        doc2git_textareaReRender();
+        doc2git_OutputReRender();
+        doc2git_textareaBoxKeepDimension();
+        doc2git_leftRightBoxKeepDimension();
+    }
 
-        function submitTryit() {
-            var text = editor.getValue();
-            var patternHtml = /<html[^>]*>((.|[\n\r])*)<\/html>/im
-            var patternHead = /<head[^>]*>((.|[\n\r])*)<\/head>/im
-            var array_matches_head = patternHead.exec(text);
-            var patternBody = /<body[^>]*>((.|[\n\r])*)<\/body>/im;
+    function submitTryit() {
+        var text = editor.getValue();
+        var patternHtml = /<html[^>]*>((.|[\n\r])*)<\/html>/im
+        var patternHead = /<head[^>]*>((.|[\n\r])*)<\/head>/im
+        var array_matches_head = patternHead.exec(text);
+        var patternBody = /<body[^>]*>((.|[\n\r])*)<\/body>/im;
 
-            var array_matches_body = patternBody.exec(text);
-            var basepath_flag = 1;
-            var basepath = '';
-            if (basepath_flag) {
+        var array_matches_body = patternBody.exec(text);
+        var basepath_flag = 1;
+        var basepath = '';
+        if (basepath_flag) {
 //            basepath = '<base href="//www.runoob.com/try/demo_source/" target="_blank">';
-            }
-            if (array_matches_head) {
-                text = text.replace('<head>', '<head>' + basepath);
-            } else if (patternHtml) {
-                text = text.replace('<html>', '<head>' + basepath + '</head>');
-            } else if (array_matches_body) {
-                text = text.replace('<body>', '<body>' + basepath);
-            } else {
-                text = basepath + text;
-            }
-            var ifr = document.createElement("iframe");
-            ifr.setAttribute("frameborder", "0");
-            ifr.setAttribute("id", "iframeResult");
-            document.getElementById("iframewrapper").innerHTML = "";
-            document.getElementById("iframewrapper").appendChild(ifr);
-
-            var ifrw = (ifr.contentWindow) ? ifr.contentWindow : (ifr.contentDocument.document) ? ifr.contentDocument.document : ifr.contentDocument;
-            ifrw.document.open();
-            ifrw.document.write(text);
-            ifrw.document.close();
-            autodivheight();
         }
+        if (array_matches_head) {
+            text = text.replace('<head>', '<head>' + basepath);
+        } else if (patternHtml) {
+            text = text.replace('<html>', '<head>' + basepath + '</head>');
+        } else if (array_matches_body) {
+            text = text.replace('<body>', '<body>' + basepath);
+        } else {
+            text = basepath + text;
+        }
+        var ifr = document.createElement("iframe");
+        ifr.setAttribute("frameborder", "0");
+        ifr.setAttribute("id", "iframeResult");
+        document.getElementById("iframewrapper").innerHTML = "";
+        document.getElementById("iframewrapper").appendChild(ifr);
 
-        submitTryit();
+        var ifrw = (ifr.contentWindow) ? ifr.contentWindow : (ifr.contentDocument.document) ? ifr.contentDocument.document : ifr.contentDocument;
+        ifrw.document.open();
+        ifrw.document.write(text);
+        ifrw.document.close();
         autodivheight();
+    }
+
+    submitTryit();
+    autodivheight();
 
 </script>
 
