@@ -110,13 +110,25 @@
     </style>
 
     <style data-author="doc2git">
-        #doc2git--left-box,
-        #doc2git--right-box {
-            overflow-y: scroll;
-        }
 
+        #prev, #next, #turtor-uri-input, #go-btn {
+            margin: 0 3px 0 3px;
+        }
         #doc2git--right-box .panel:nth-last-of-type(1) {
             margin-bottom: 0;
+        }
+        #doc2git--output--panel-body {
+            position: relative;
+        }
+        #output-tips {
+            position: absolute;
+            top: 10px;
+            right: 40px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        #true-footer {
+            margin: -20px 0 0 0;
         }
     </style>
 
@@ -205,12 +217,13 @@ new Vue({
         </div>
 
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <form class="form-inline">
-                    <button type="button" class="btn btn-default">运行结果</button>
-                </form>
-            </div>
+            <!--<div class="panel-heading">-->
+                <!--<form class="form-inline">-->
+                    <!--<button type="button" class="btn btn-default">运行结果</button>-->
+                <!--</form>-->
+            <!--</div>-->
             <div id="doc2git--output--panel-body" class="panel-body">
+                <span id="output-tips">&lt;&lt;&nbsp;&nbsp;运行结果</span>
                 <div style="height: 240px;" id="iframewrapper"></div>
             </div>
         </div>
@@ -219,7 +232,7 @@ new Vue({
 
     <footer>
         <div class="row">
-            <div class="col-sm-12">
+            <div id="true-footer" class="col-sm-12">
                 <div style="text-align: center;">
 
                     <hr>
@@ -546,6 +559,32 @@ new Vue({
 
     submitTryit();
     autodivheight();
+
+
+    ~function doc2git_hiddenNavIfPanelHeadingScrolledOut() {
+        var body = document.body || document.documentElement;
+
+        function getElementTop(element) {
+            var actualTop = element.offsetTop;
+            var current = element.offsetParent;
+            while (current !== null) {
+                actualTop += current.offsetTop;
+                current = current.offsetParent;
+            }
+            return actualTop;
+        }
+
+        var nav = body.getElementsByTagName('nav')[0];
+        window.onscroll = function () {
+
+            var wrapperTurtorNavbar = document.getElementById('wrapper-turtor-navbar');
+            if (getElementTop(wrapperTurtorNavbar) - body.scrollTop < nav.offsetHeight) {
+                nav.style.visibility = 'hidden';
+            } else {
+                nav.style.visibility = 'visible';
+            }
+        }
+    }();
 
 </script>
 
