@@ -411,23 +411,27 @@ new Vue({
     window.doc2git_OutputReRender = doc2git_OutputReRender;
 
     function doc2git_textareaBoxKeepDimension() {
-        var textareaBox = document.getElementById('doc2git--textarea--panel-body');
-        var outputPanelBody = document.getElementById('doc2git--output--panel-body');
-        var mustWidth = window.getComputedStyle(outputPanelBody).width;
-        window.doc2git_textarea_mustHeight = window.doc2git_textarea_mustHeight || window.getComputedStyle(textareaBox).height;
-        textareaBox.style.width = mustWidth;
-        var textarea_CodeMirror = textareaBox.getElementsByClassName('CodeMirror-code')[0];
-        textarea_CodeMirror.style.height = window.doc2git_textarea_mustHeight;
-        textarea_CodeMirror.style.overflowY = 'scroll';
-        var textarea_CodeMirrorSizer = textareaBox.getElementsByClassName('CodeMirror-sizer')[0];
-        console.log(textarea_CodeMirrorSizer.minHeight, '423----');
-        setTimeout(function(){
+        //modified in codemirror, function dz(gg, gh), which function will be execute frequncely.
+        //So this function doc2git_textareaBoxKeepDimension would not necessary any more. and this function will be removed soon.
 
-            textarea_CodeMirrorSizer.style.minHeight = 100 + 'px';
-            console.log(textarea_CodeMirrorSizer.style.minHeight, '427---');
-            }, 1000
+//        var textareaBox = document.getElementById('doc2git--textarea--panel-body');
+//        var outputPanelBody = document.getElementById('doc2git--output--panel-body');
+//        var mustWidth = window.getComputedStyle(outputPanelBody).width;
+//        window.doc2git_textarea_mustHeight = window.doc2git_textarea_mustHeight || window.getComputedStyle(textareaBox).height;
+//        textareaBox.style.width = mustWidth;
+//        var textarea_CodeMirror = textareaBox.getElementsByClassName('CodeMirror-code')[0];
+//        textarea_CodeMirror.style.height = window.doc2git_textarea_mustHeight;
+//        textarea_CodeMirror.style.overflowY = 'scroll';
+//        var textarea_CodeMirrorSizer = textareaBox.getElementsByClassName('CodeMirror-sizer')[0];
+//        console.log(textarea_CodeMirrorSizer.minHeight, '423----');
 
-        );
+//        setTimeout(function(){
+//
+//            textarea_CodeMirrorSizer.style.minHeight = 100 + 'px';
+//            console.log(textarea_CodeMirrorSizer.style.minHeight, '427---');
+//            }, 1000
+//
+//        );
 //        textarea_CodeMirrorSizer.style.overflowY = 'scroll';
 //        textareaBox.style.overflowY = 'scroll';
     }
