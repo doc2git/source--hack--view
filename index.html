@@ -20,30 +20,231 @@
     <div class="script-wrapper">
         <!---->
         <!--<script data-hacker="doc2git">-->
-            <!--function doc2git_textareaReRender() {-->
-                <!--var textarea__panel_body = document.getElementById('doc2git&#45;&#45;textarea&#45;&#45;panel-body');-->
-<!--//            console.log(textarea__panel_body, '26-&#45;&#45;');-->
-                <!--var codeMirror__cm_s_default = textarea__panel_body.getElementsByClassName('CodeMirror cm-s-default')[0];-->
-<!--//            console.log(codeMirror__cm_s_default, '27-&#45;&#45;');-->
-                <!--codeMirror__cm_s_default.style.height = '300px';-->
-            <!--}-->
+        <!--function doc2git_textareaReRender() {-->
+        <!--var textarea__panel_body = document.getElementById('doc2git&#45;&#45;textarea&#45;&#45;panel-body');-->
+        <!--//            console.log(textarea__panel_body, '26-&#45;&#45;');-->
+        <!--var codeMirror__cm_s_default = textarea__panel_body.getElementsByClassName('CodeMirror cm-s-default')[0];-->
+        <!--//            console.log(codeMirror__cm_s_default, '27-&#45;&#45;');-->
+        <!--codeMirror__cm_s_default.style.height = '300px';-->
+        <!--}-->
 
-            <!--function doc2git_OutputReRender() {-->
-                <!--var outputPanelBody = document.getElementById('doc2git&#45;&#45;output&#45;&#45;panel-body');-->
-                <!--console.log(outputPanelBody, 26);-->
-                <!--var outputIframe = outputPanelBody.getElementsByTagName('iframe')[0];-->
-                <!--if (outputIframe) {-->
-                    <!--outputIframe.style.minHeight = '100px';-->
-                    <!--outputIframe.style.height = '100px';-->
-<!--//                console.log( '30+_++', outputIframe.style.minHeight, outputIframe.style.height);-->
-                <!--}-->
-                <!--var iframewrapper = document.getElementById('iframewrapper');-->
-                <!--iframewrapper.style.minHeight = '100px';-->
-                <!--iframewrapper.style.height = '100px';-->
-            <!--}-->
+        <!--function doc2git_OutputReRender() {-->
+        <!--var outputPanelBody = document.getElementById('doc2git&#45;&#45;output&#45;&#45;panel-body');-->
+        <!--console.log(outputPanelBody, 26);-->
+        <!--var outputIframe = outputPanelBody.getElementsByTagName('iframe')[0];-->
+        <!--if (outputIframe) {-->
+        <!--outputIframe.style.minHeight = '100px';-->
+        <!--outputIframe.style.height = '100px';-->
+        <!--//                console.log( '30+_++', outputIframe.style.minHeight, outputIframe.style.height);-->
+        <!--}-->
+        <!--var iframewrapper = document.getElementById('iframewrapper');-->
+        <!--iframewrapper.style.minHeight = '100px';-->
+        <!--iframewrapper.style.height = '100px';-->
+        <!--}-->
         <!--</script>-->
         <!---->
     </div>
+
+    <style>
+        body {
+            min-height: 300px;
+            padding-top: 90px;
+            background: #f6f6f6;
+        }
+
+        .container {
+            width: 98%;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto
+        }
+
+        .CodeMirror {
+            min-height: 300px;;
+            font-family: Menlo, Monaco, Consolas, "Andale Mono", "lucida console", "Courier New", monospace;
+        }
+
+        #textareaCode {
+            min-height: 260px /*hacked by doc2git*/
+        }
+
+        #iframeResult {
+            display: block;
+            overflow: hidden;
+            border: 0 !important;
+            min-width: 100px;
+            width: 100%;
+            min-height: 260px; /*hacked by doc2git*/
+            background-color: #fff
+        }
+
+        @media screen and (max-width: 768px) {
+            #textareaCode {
+                height: 300px
+            }
+
+            .CodeMirror {
+                height: 300px;
+                font-family: Menlo, Monaco, Consolas, "Andale Mono", "lucida console", "Courier New", monospace;
+            }
+
+            #iframeResult {
+                height: 300px
+            }
+
+            .form-inline {
+                padding: 6px 0 2px 0
+            }
+        }
+
+        .logo h1 {
+            /*background-image: url(/images/logo-domain-white.png);*/
+            background-repeat: no-repeat;
+            text-indent: -9999px;
+            width: 160px;
+            height: 39px;
+            margin-top: 10px;
+            display: block
+        }
+    </style>
+
+    <style data-author="doc2git">
+        #doc2git--left-box,
+        #doc2git--right-box {
+            scroll: auto;
+            overflow-y: hidden;
+        }
+        #doc2git--right-box .panel:nth-last-of-type(1){
+            margin-bottom: 0;
+        }
+    </style>
+
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top" style="background: #00b0c1;">
+    <div class="container">
+        <div class="navbar-header logo"><h1>
+            <a target="_blank" href="/" style="display: block;">doc2git.com</a></h1>
+        </div>
+    </div>
+</nav>
+
+
+<!--<iframe class="col-sm-6" src="https://cn.vuejs.org/v2/guide/" width="300px" ; height="594px" frameborder="0"></iframe>-->
+
+<div class="container">
+
+
+    <div id="doc2git--left-box" style="height:100%; display:flex; flex-direction:column; align-content:space-between"
+         class="col-sm-6">
+        <div style="flex:0" class="panel panel-default">
+            <div id="wrapper-turtor-navbar" class="panel-heading">
+                <form id="turtor-navbar" style="display:flex; justify-content:space-around" class="form-inline">
+                    <!--<label for="uri" class="sr-only">请键入教程地址</label>-->
+                    <button id="prev" type="button" class="btn btn-default disabled">B</button>
+                    <button id="next" type="button" class="btn btn-default disabled">F</button>
+                    <input id="turtor-uri-input" type="text" value="http://localhost:7776" style="width:80%"
+                           class="form-control">
+                    <button id="go-btn" type="button" class="btn btn-default">GO!</button>
+
+                </form>
+            </div>
+            <!--<div class="panel-body">-->
+            <!--<div id="iframewrapper"></div>-->
+            <!--</div>-->
+        </div>
+        <iframe id="turtor-iframe" src="http://localhost:7776" width="100%" style="flex:1"
+                frameborder="0"></iframe>
+    </div>
+
+    <!--<div class="col-sm-6">-->
+    <div id="doc2git--right-box" class="col-sm-6">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <form class="form-inline">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <button type="button" class="btn btn-default">源代码：</button>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <button type="button" style="background-color:#5fcad5;border-color:#00b2c1" class="btn"
+                                    onclick="submitTryit()" id="submitBTN">
+                                <span class="glyphicon glyphicon-send"></span> 点击运行
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div id="doc2git--textarea--panel-body" class="panel-body">
+			<textarea class="form-control" id="textareaCode" name="textareaCode">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;title&gt; Enjoy hacking UI and viewing render! &lt;/title&gt;
+&lt;script src=&quot;https://unpkg.com/vue/dist/vue.min.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;app&quot;&gt;
+  &lt;p&gt;{{ message }}&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue.js!'
+  }
+})
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <form class="form-inline">
+                    <button type="button" class="btn btn-default">运行结果</button>
+                </form>
+            </div>
+            <div id="doc2git--output--panel-body" class="panel-body">
+                <div style="height: 240px;" id="iframewrapper"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="text-align: center;">
+
+                    <hr>
+
+                    <p>Copyright © 2013-2017<a target="_blank" href="//doc2git.com/">doc2git</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<div style="display:none;">
+    <!--<script>-->
+    <!--var _hmt = _hmt || [];-->
+    <!--(function () {-->
+    <!--var hm = document.createElement("script");-->
+    <!--hm.src = "//hm.baidu.com/hm.js?8e2a116daf0104a78d601f40a45c75b4";-->
+    <!--var s = document.getElementsByTagName("script")[0];-->
+    <!--s.parentNode.insertBefore(hm, s);-->
+    <!--})();-->
+    <!--</script>-->
+</div>
+<!--Bellow code attemp to get the output iframe and hack its height, but when output was changing , the height will resume, so this idea is worse.-->
+</body>
+</html>
 
     <script data-hacker="doc2git">
 
@@ -55,7 +256,8 @@
             return this.replace(/(^\s+|\s+$)/, '');
         };
 
-        document.addEventListener('DOMContentLoaded', function () {
+
+//        document.addEventListener('DOMContentLoaded', function () {
 
             var turtorIframe = document.getElementById('turtor-iframe');
             var turtorNavbar = document.getElementById('turtor-navbar');
@@ -94,8 +296,10 @@
                     ele.className = ele.className.replace(/\bdisabled\b/, '').replace(/\s+/, ' ').replace(/(^\s+|\s+$)/, '');
                     ele.enable = true;
                 }
+
                 enableNavBtn(prev);
                 enableNavBtn(next);
+
                 function disableNavBtn(ele) {
                     ele.enable = false;
                     if (!/\bdisabled\b/.test(ele.className)) {
@@ -178,220 +382,68 @@
                 }
             }();  //教程导航条的定义至此完成
 
-        }, false);
 
+            //以下定义在resize函数中执行的修复盒子尺寸的函数
+            function doc2git_textareaReRender() {
+                var textarea__panel_body = document.getElementById('doc2git--textarea--panel-body');
+                var codeMirror__cm_s_default = textarea__panel_body.getElementsByClassName('CodeMirror cm-s-default')[0];
+                //            console.log(codeMirror__cm_s_default, '27---');
+                codeMirror__cm_s_default.style.height = 'auto';
+            }
 
-                //以下定义在resize函数中执行的修复盒子尺寸的函数
-                function doc2git_textareaReRender() {
-                    var textarea__panel_body = document.getElementById('doc2git--textarea--panel-body');
-                    var codeMirror__cm_s_default = textarea__panel_body.getElementsByClassName('CodeMirror cm-s-default')[0];
-        //            console.log(codeMirror__cm_s_default, '27---');
-                    codeMirror__cm_s_default.style.height = 'auto';
+            window.doc2git_textareaReRender = doc2git_textareaReRender;
+
+            function doc2git_OutputReRender() {
+                var outputPanelBody = document.getElementById('doc2git--output--panel-body');
+                var outputIframe = outputPanelBody.getElementsByTagName('iframe')[0];
+                if (outputIframe) {
+                    outputIframe.style.minHeight = '100px';
+                    outputIframe.style.height = '100px';
                 }
+                var iframewrapper = document.getElementById('iframewrapper');
+                iframewrapper.style.minHeight = '100px';
+                iframewrapper.style.height = '100px';
+            }
 
-                function doc2git_OutputReRender() {
-                    var outputPanelBody = document.getElementById('doc2git--output--panel-body');
-                    var outputIframe = outputPanelBody.getElementsByTagName('iframe')[0];
-                    if (outputIframe) {
-                        outputIframe.style.minHeight = '100px';
-                        outputIframe.style.height = '100px';
-                    }
-                    var iframewrapper = document.getElementById('iframewrapper');
-                    iframewrapper.style.minHeight = '100px';
-                    iframewrapper.style.height = '100px';
-                }
+            window.doc2git_OutputReRender = doc2git_OutputReRender;
 
-                function doc2git_textareaBoxKeepWidth() {
-                    var textareaBox = document.getElementById('doc2git--texarea-box');
-                    var outputPanelBody = document.getElementById('doc2git--output--panel-body');
-                    var mustWidth = window.getComputedStyle(outputPanelBody).width;
-                    textareaBox.style.width = mustWidth;
-                }
+            function doc2git_textareaBoxKeepWidth() {
+//                var textareaBox = document.getElementById('doc2git--texarea-box');
+//                var outputPanelBody = document.getElementById('doc2git--output--panel-body');
+//                var mustWidth = window.getComputedStyle(outputPanelBody).width;
+//                textareaBox.style.width = mustWidth;
+            }
 
-                function doc2git_leftRightBoxKeepDimension() {
-                    var leftBox = document.getElementById('doc2git--left-box');
-                    var rightBox = document.getElementById('doc2git--right-box');
+            window.doc2git_textareaBoxKeepWidth = doc2git_textareaBoxKeepWidth;
+
+            function doc2git_leftRightBoxKeepDimension() {
+                var leftBox = document.getElementById('doc2git--left-box');
+                var rightBox = document.getElementById('doc2git--right-box');
 //                    var mustHeight = window.getComputedStyle(leftBox).height;
-                    var mustHeight = window.getComputedStyle(rightBox).height;
-                    leftBox.style.height = mustHeight;
-                    var mustWidth = window.getComputedStyle(rightBox).width;
-                    leftBox.style.width = mustWidth;
-                }
+                var mustHeight = window.getComputedStyle(rightBox).height;
+                leftBox.style.height = mustHeight;
+                var mustWidth = window.getComputedStyle(rightBox).width;
+                leftBox.style.width = mustWidth;
+                var wrapperTurtorNavbar = document.getElementById('wrapper-turtor-navbar');
+                turtorIframe.style.height = leftBox.style.height - wrapperTurtorNavbar.style.height;
+            }
+
+            window.doc2git_leftRightBoxKeepDimension = doc2git_leftRightBoxKeepDimension;
+
+
+
+//        }, false);
     </script>
 
-    <style>
-        body {
-            min-height: 300px;
-            padding-top: 90px;
-            background: #f6f6f6;
-        }
 
-        .container {
-            width: 98%;
-            padding-right: 15px;
-            padding-left: 15px;
-            margin-right: auto;
-            margin-left: auto
-        }
+<script data-hacker="doc2git">
+    //    doc2git_textareaDimension();
+</script>
 
-        .CodeMirror {
-            min-height: 300px;;
-            font-family: Menlo, Monaco, Consolas, "Andale Mono", "lucida console", "Courier New", monospace;
-        }
-
-        #textareaCode {
-            min-height: 260px /*hacked by doc2git*/
-        }
-
-        #iframeResult {
-            display: block;
-            overflow: hidden;
-            border: 0 !important;
-            min-width: 100px;
-            width: 100%;
-            min-height: 260px; /*hacked by doc2git*/
-            background-color: #fff
-        }
-
-        @media screen and (max-width: 768px) {
-            #textareaCode {
-                height: 300px
-            }
-
-            .CodeMirror {
-                height: 300px;
-                font-family: Menlo, Monaco, Consolas, "Andale Mono", "lucida console", "Courier New", monospace;
-            }
-
-            #iframeResult {
-                height: 300px
-            }
-
-            .form-inline {
-                padding: 6px 0 2px 0
-            }
-        }
-
-        .logo h1 {
-            /*background-image: url(/images/logo-domain-white.png);*/
-            background-repeat: no-repeat;
-            text-indent: -9999px;
-            width: 160px;
-            height: 39px;
-            margin-top: 10px;
-            display: block
-        }
-    </style>
-</head>
-<body>
-
-<nav class="navbar navbar-default navbar-fixed-top" style="background: #00b0c1;">
-    <div class="container">
-        <div class="navbar-header logo"><h1>
-            <a target="_blank" href="/" style="display: block;">doc2git.com</a></h1>
-        </div>
-    </div>
-</nav>
-
-
-    <div id="doc2git--left-box" style="height:100%; display:flex; flex-direction:column; align-content:space-between"
-         class="col-sm-6">
-        <div style="flex:0" class="panel panel-default">
-            <div class="panel-heading">
-                <form id="turtor-navbar" style="display:flex; justify-content:space-around" class="form-inline">
-                    <!--<label for="uri" class="sr-only">请键入教程地址</label>-->
-                    <button id="prev" type="button" class="btn btn-default disabled">B</button>
-                    <button id="next" type="button" class="btn btn-default disabled">F</button>
-                    <input id="turtor-uri-input" type="text" value="http://localhost:7776" style="width:80%"
-                           class="form-control">
-                    <button id="go-btn" type="button" class="btn btn-default">GO!</button>
-
-                </form>
-            </div>
-            <!--<div class="panel-body">-->
-            <!--<div id="iframewrapper"></div>-->
-            <!--</div>-->
-        </div>
-        <iframe id="turtor-iframe" src="http://localhost:7776" width="100%" style="flex:1"
-                frameborder="0"></iframe>
-    </div>
-
-
-<!--<iframe class="col-sm-6" src="https://cn.vuejs.org/v2/guide/" width="300px" ; height="594px" frameborder="0"></iframe>-->
-
-<div class="container">
-
-    <div class="col-sm-6">
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <form class="form-inline">
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <button type="button" class="btn btn-default">源代码：</button>
-                        </div>
-                        <div class="col-xs-6 text-right">
-                            <button type="button" style="background-color:#5fcad5;border-color:#00b2c1" class="btn"
-                                    onclick="submitTryit()" id="submitBTN">
-                                <span class="glyphicon glyphicon-send"></span> 点击运行
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div id="doc2git--textarea--panel-body" class="panel-body">
-			<textarea class="form-control" id="textareaCode" name="textareaCode">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-&lt;meta charset=&quot;utf-8&quot;&gt;
-&lt;title&gt; Enjoy hacking UI and viewing render! &lt;/title&gt;
-&lt;script src=&quot;https://unpkg.com/vue/dist/vue.min.js&quot;&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;div id=&quot;app&quot;&gt;
-  &lt;p&gt;{{ message }}&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;script&gt;
-new Vue({
-  el: '#app',
-  data: {
-    message: 'Hello Vue.js!'
-  }
-})
-&lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea>
-            </div>
-        </div>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <form class="form-inline">
-                    <button type="button" class="btn btn-default">运行结果</button>
-                </form>
-            </div>
-            <div id="doc2git--output--panel-body" class="panel-body">
-                <div style="height: 240px;" id="iframewrapper"></div>
-            </div>
-        </div>
-    </div>
-
-
-    <footer>
-        <div class="row">
-            <div class="col-sm-12">
-                <div style="text-align: center;">
-
-                    <hr>
-
-                    <p>Copyright © 2013-2017<a target="_blank" href="//doc2git.com/">doc2git</a></p>
-                </div>
-            </div>
-        </div>
-    </footer>
-</div>
 <script>
+
+
+
     var mixedMode = {
         name: "htmlmixed",
         scriptTypes: [{
@@ -418,76 +470,65 @@ new Vue({
 
     var x = 0;
 
-    function autodivheight() {
-        var winHeight = 0;
-        if (window.innerHeight) {
-            winHeight = window.innerHeight;
-        } else if ((document.body) && (document.body.clientHeight)) {
-            winHeight = document.body.clientHeight;
-        }
-        //通过深入Document内部对body进行检测，获取浏览器窗口高度
-        if (document.documentElement && document.documentElement.clientHeight) {
-            winHeight = document.documentElement.clientHeight;
-        }
-        height = winHeight * 0.68
-        editor.setSize('100%', height);
-        document.getElementById("iframeResult").style.height = height + "px";
-        doc2git_textareaReRender();
-        doc2git_OutputReRender();
-    }
 
-    function submitTryit() {
-        var text = editor.getValue();
-        var patternHtml = /<html[^>]*>((.|[\n\r])*)<\/html>/im
-        var patternHead = /<head[^>]*>((.|[\n\r])*)<\/head>/im
-        var array_matches_head = patternHead.exec(text);
-        var patternBody = /<body[^>]*>((.|[\n\r])*)<\/body>/im;
 
-        var array_matches_body = patternBody.exec(text);
-        var basepath_flag = 1;
-        var basepath = '';
-        if (basepath_flag) {
+        function autodivheight() {
+            var winHeight = 0;
+            if (window.innerHeight) {
+                winHeight = window.innerHeight;
+            } else if ((document.body) && (document.body.clientHeight)) {
+                winHeight = document.body.clientHeight;
+            }
+            //通过深入Document内部对body进行检测，获取浏览器窗口高度
+            if (document.documentElement && document.documentElement.clientHeight) {
+                winHeight = document.documentElement.clientHeight;
+            }
+            height = winHeight * 0.68
+            editor.setSize('100%', height);
+            document.getElementById("iframeResult").style.height = height + "px";
+            doc2git_textareaReRender();
+            doc2git_OutputReRender();
+//            doc2git_textareaBoxKeepWidth();
+            doc2git_leftRightBoxKeepDimension();
+        }
+
+        function submitTryit() {
+            var text = editor.getValue();
+            var patternHtml = /<html[^>]*>((.|[\n\r])*)<\/html>/im
+            var patternHead = /<head[^>]*>((.|[\n\r])*)<\/head>/im
+            var array_matches_head = patternHead.exec(text);
+            var patternBody = /<body[^>]*>((.|[\n\r])*)<\/body>/im;
+
+            var array_matches_body = patternBody.exec(text);
+            var basepath_flag = 1;
+            var basepath = '';
+            if (basepath_flag) {
 //            basepath = '<base href="//www.runoob.com/try/demo_source/" target="_blank">';
-        }
-        if (array_matches_head) {
-            text = text.replace('<head>', '<head>' + basepath);
-        } else if (patternHtml) {
-            text = text.replace('<html>', '<head>' + basepath + '</head>');
-        } else if (array_matches_body) {
-            text = text.replace('<body>', '<body>' + basepath);
-        } else {
-            text = basepath + text;
-        }
-        var ifr = document.createElement("iframe");
-        ifr.setAttribute("frameborder", "0");
-        ifr.setAttribute("id", "iframeResult");
-        document.getElementById("iframewrapper").innerHTML = "";
-        document.getElementById("iframewrapper").appendChild(ifr);
+            }
+            if (array_matches_head) {
+                text = text.replace('<head>', '<head>' + basepath);
+            } else if (patternHtml) {
+                text = text.replace('<html>', '<head>' + basepath + '</head>');
+            } else if (array_matches_body) {
+                text = text.replace('<body>', '<body>' + basepath);
+            } else {
+                text = basepath + text;
+            }
+            var ifr = document.createElement("iframe");
+            ifr.setAttribute("frameborder", "0");
+            ifr.setAttribute("id", "iframeResult");
+            document.getElementById("iframewrapper").innerHTML = "";
+            document.getElementById("iframewrapper").appendChild(ifr);
 
-        var ifrw = (ifr.contentWindow) ? ifr.contentWindow : (ifr.contentDocument.document) ? ifr.contentDocument.document : ifr.contentDocument;
-        ifrw.document.open();
-        ifrw.document.write(text);
-        ifrw.document.close();
+            var ifrw = (ifr.contentWindow) ? ifr.contentWindow : (ifr.contentDocument.document) ? ifr.contentDocument.document : ifr.contentDocument;
+            ifrw.document.open();
+            ifrw.document.write(text);
+            ifrw.document.close();
+            autodivheight();
+        }
+
+        submitTryit();
         autodivheight();
-    }
 
-    submitTryit();
-    autodivheight();
 </script>
-<div style="display:none;">
-    <!--<script>-->
-    <!--var _hmt = _hmt || [];-->
-    <!--(function () {-->
-    <!--var hm = document.createElement("script");-->
-    <!--hm.src = "//hm.baidu.com/hm.js?8e2a116daf0104a78d601f40a45c75b4";-->
-    <!--var s = document.getElementsByTagName("script")[0];-->
-    <!--s.parentNode.insertBefore(hm, s);-->
-    <!--})();-->
-    <!--</script>-->
-</div>
-<!--Bellow code attemp to get the output iframe and hack its height, but when output was changing , the height will resume, so this idea is worse.-->
-</body>
-</html>
-<script data-hacker="doc2git">
-    //    doc2git_textareaDimension();
-</script>
+
