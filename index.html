@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <title>Edit code here, view the output write away!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./bootstrap.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="./codemirror.min.js"></script>
-    <link rel="stylesheet" href="./codemirror.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/codemirror/5.2.0/codemirror.min.css">
     <script src="./htmlmixed.min.js"></script>
     <script src="./css.min.js"></script>
     <script src="./javascript.min.js"></script>
@@ -82,15 +82,25 @@
 
     <style data-author="doc2git">
 
+        @media (max-width: 850px) {
+            #doc2git--right-box,
+            #doc2git--left-box {
+                margin-top: 40px;
+            }
+        }
+
         #prev, #next, #turtor-uri-input, #go-btn {
             margin: 0 3px 0 3px;
         }
+
         #doc2git--right-box .panel:nth-last-of-type(1) {
             margin-bottom: 0;
         }
+
         #doc2git--output--panel-body {
             position: relative;
         }
+
         #output-tips {
             position: absolute;
             top: 10px;
@@ -98,6 +108,7 @@
             font-size: 14px;
             color: #ccc;
         }
+
         #true-footer {
             margin: -20px 0 0 0;
         }
@@ -179,11 +190,6 @@ new Vue({
         </div>
 
         <div class="panel panel-default">
-            <!--<div class="panel-heading">-->
-                <!--<form class="form-inline">-->
-                    <!--<button type="button" class="btn btn-default">运行结果</button>-->
-                <!--</form>-->
-            <!--</div>-->
             <div id="doc2git--output--panel-body" class="panel-body">
                 <span id="output-tips">&lt;&lt;&nbsp;&nbsp;运行结果</span>
                 <div style="height: 240px;" id="iframewrapper"></div>
@@ -206,17 +212,6 @@ new Vue({
     </footer>
 </div>
 
-<div style="display:none;">
-    <!--<script>-->
-    <!--var _hmt = _hmt || [];-->
-    <!--(function () {-->
-    <!--var hm = document.createElement("script");-->
-    <!--hm.src = "//hm.baidu.com/hm.js?8e2a116daf0104a78d601f40a45c75b4";-->
-    <!--var s = document.getElementsByTagName("script")[0];-->
-    <!--s.parentNode.insertBefore(hm, s);-->
-    <!--})();-->
-    <!--</script>-->
-</div>
 </body>
 </html>
 
@@ -381,34 +376,6 @@ new Vue({
 
     window.doc2git_OutputReRender = doc2git_OutputReRender;
 
-    function doc2git_textareaBoxKeepDimension() {
-        //modified in codemirror, function dz(gg, gh), which function will be execute frequncely.
-        //So this function doc2git_textareaBoxKeepDimension would not necessary any more. and this function will be removed soon.
-
-//        var textareaBox = document.getElementById('doc2git--textarea--panel-body');
-//        var outputPanelBody = document.getElementById('doc2git--output--panel-body');
-//        var mustWidth = window.getComputedStyle(outputPanelBody).width;
-//        window.doc2git_textarea_mustHeight = window.doc2git_textarea_mustHeight || window.getComputedStyle(textareaBox).height;
-//        textareaBox.style.width = mustWidth;
-//        var textarea_CodeMirror = textareaBox.getElementsByClassName('CodeMirror-code')[0];
-//        textarea_CodeMirror.style.height = window.doc2git_textarea_mustHeight;
-//        textarea_CodeMirror.style.overflowY = 'scroll';
-//        var textarea_CodeMirrorSizer = textareaBox.getElementsByClassName('CodeMirror-sizer')[0];
-//        console.log(textarea_CodeMirrorSizer.minHeight, '423----');
-
-//        setTimeout(function(){
-//
-//            textarea_CodeMirrorSizer.style.minHeight = 100 + 'px';
-//            console.log(textarea_CodeMirrorSizer.style.minHeight, '427---');
-//            }, 1000
-//
-//        );
-//        textarea_CodeMirrorSizer.style.overflowY = 'scroll';
-//        textareaBox.style.overflowY = 'scroll';
-    }
-
-    window.doc2git_textareaBoxKeepDimension = doc2git_textareaBoxKeepDimension;
-
     function doc2git_leftRightBoxKeepDimension() {
 //                    var mustHeight = window.getComputedStyle(leftBox).height;
         var mustHeight = window.getComputedStyle(rightBox).height;
@@ -476,7 +443,6 @@ new Vue({
         document.getElementById("iframeResult").style.height = height + "px";
         doc2git_textareaReRender();
         doc2git_OutputReRender();
-        doc2git_textareaBoxKeepDimension();
         doc2git_leftRightBoxKeepDimension();
     }
 
@@ -491,7 +457,7 @@ new Vue({
         var basepath_flag = 1;
         var basepath = '';
         if (basepath_flag) {
-//            basepath = '<base href="//www.runoob.com/try/demo_source/" target="_blank">';
+//            basepath = '<base href="//doc2git.com" target="_blank">';
         }
         if (array_matches_head) {
             text = text.replace('<head>', '<head>' + basepath);
